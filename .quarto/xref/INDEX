@@ -1,0 +1,26 @@
+{
+  "index.qmd": {
+    "index.html": "fb02ac9a"
+  },
+  "about.qmd": {
+    "about.html": "11af310d"
+  },
+  "projects/thesismx.qmd": {
+    "thesismx.html": "c57403dc"
+  },
+  "projects/UCLA Labor Research.qmd": {
+    "UCLA Labor Research.html": "741f0b0d"
+  },
+  "projects/calosha.qmd": {
+    "calosha.html": "ecbc2290"
+  },
+  "projects/socalcosh.qmd": {
+    "socalcosh.html": "de88600c"
+  },
+  "publications.qmd": {
+    "publications.html": "58509742"
+  },
+  "resume.qmd": {
+    "resume.html": "5ef153e3"
+  }
+}

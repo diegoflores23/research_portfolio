@@ -1,0 +1,11 @@
+---
+title: "Resume"
+format: html
+---
+
+```{=html}
+<iframe 
+  width="800" 
+  height="800"
+  src="images/Flores Diego Curricula Vitae 2026.pdf">
+```

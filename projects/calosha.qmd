@@ -1,0 +1,10 @@
+---
+title: "CalOSHA employer inspections, violations, and citations in the aftermath of the 2025 Los Angeles Fires"
+format: html
+---
+
+### CalOSHA employer inspections, violations, and citations in the aftermath of the 2025 Los Angeles Fires
+
+code for the automated flow
+
+![](images/wage_ffood.png)

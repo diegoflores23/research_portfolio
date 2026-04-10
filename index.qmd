@@ -1,0 +1,6 @@
+---
+title: ""
+listing: 
+  contents: projects #directory containing qmd files 
+  sort: "date desc" #date
+---

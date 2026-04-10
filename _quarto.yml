@@ -1,0 +1,30 @@
+project:
+  type: website
+  
+website:
+  title: "Diego Flores"
+  
+  navbar:
+    search: false
+    right: 
+      - href: index.qmd
+        text: Home
+      - href: about.qmd
+        text: About
+      - href: publications.qmd
+        text: Publications
+      - href: resume.qmd
+        text: Resume
+      - icon: linkedin
+        href: https://www.linkedin.com/in/diego-flores-a00a53198  
+      - icon: envelope
+        href: mailto:diego.flores@fulbrightmail.org
+format:
+  html:
+    theme: cosmo
+    css: styles.scss
+    toc: true
+    
+
+editor: visual
+

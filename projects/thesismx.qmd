@@ -1,0 +1,156 @@
+---
+title: "Exploring the relationship between poverty and homicide rates from the Mexican War on Drugs"
+format: html
+execute: 
+  eval: false
+---
+
+This project is a lightly modified adaptation of my honors thesis in completion of the BA degree in Political Science at Pitzer College.
+
+```{r setup-import-data}
+library(foreign)
+#install.packages("gapminder")
+library(gapminder)
+library(readxl)
+#install.packages("stargazer")
+library(stargazer)
+
+# importing dataset: homicides 
+file.list <- list.files(pattern= '*.xlsx')
+cidehomicide <- lapply(file.list, read_excel)
+ 
+file.path <- "~/Users/diegoflores/Documents/RBSI-Working-directory"
+file.list <- list.files(path = file.path, pattern = '*.xlsx') 
+
+
+library(readxl)
+file.list <- list.files(pattern='*.xlsx')
+df.list <- lapply(file.list, read_excel)
+cidehomicide4 <- bind_rows(df.list, .id = "id")
+# cidehomicide4 is all xlsx files (2006-2011) in one df 
+
+cidehomicide2010 <- read_excel("A-X10.xlsx")
+# 2010 homicide data for cross section 
+
+marginalization <- read_excel("Mexgov - Marginalization index State & muncipio (base).xlsx")
+marginalization <- read_csv("Marginalization index 06anexo base.csv")
+marginalization <- read_csv("Marginalization index 06anexo base.csv")
+cidehomicide <- read_csv("CIDE homicide data (A-X10).csv")
+esochomicide <- read_dta(file = "ESOC Mexico.drug.related.murders.dta")
+
+# recode new INEGI variable 
+
+
+# subsetting and merging 
+marginsub2 <- marginalization[, c("state code", "municipality code", "municipality", "total population", "IM", "marginalization grade")] #subset margin data, 6 variables* rm(cidehomicide)
+rm(marginsub)
+rm(margin2)
+
+homicidesub2 <- homicidesub[,c("idunico", "deaths_total","deaths_execution", "deaths_confront", "deaths_aggression")]
+homicidesub <- esochomicide %>% filter(year == 2010) # subset/filter year 2010* 
+
+mhmerge <- merge(marginsub2, homicidesub2, by.x = c("municipality code"), by.y = c("idunico")) #merged data by INEGI code* 
+table(mhmerge$deaths_total)
+sum(is.na(mhmerge$deaths_total)) 
+mhmerge_rename <- rename(mhmerge, municip_code = "municipality code", state_code = "state code", marg_grade = "marginalization grade", margin_index = IM, total_pop = "total population") 
+# renamed variables, new df
+
+mhmerge = subset(mhmerge, select = -c())
+#possibly subset to remove repeat columns, ignore 
+
+# Visualization* 
+p1 <- ggplot(data = mhmerge, mapping = aes(x = IM, y = deaths_total))
+p1 <- p1 + geom_point()
+p1 <- ggplot(data = mhmerge, mapping = aes(x = IM, y = deaths_total, size = "total population")) + geom_point() # adding size of dot w total pop*
+# Warning message:Using size for a discrete variable is not advised, ignore  
+
+p1 <- ggplot(data = mhmerge_rename, mapping = aes(x = margin_index, y = deaths_total, color = as.integer(state_code))) + geom_point() +
+labs(x = "Marginalization Index", y = "Homicides", title = "Correlation Between Marginalization Levels and Drug War Homicides") +
+  ylim(0, 750)
+
+p1 <- ggplot(data = mhmerge_rename, mapping = aes(x = margin_index, y = deaths_total, color = as.integer(state_code))) + geom_point() + 
+  labs(x = "Marginalization Index", y = "Homicides", 
+       title = "Correlation Between Marginalization Levels and Drug War Homicides in 2010",
+       subtitle = "Points are recorded homicides") + ylim(0, 750) 
+#log produces various errors: introduced infinite values in continuous x axis
+# removed 1258 rows #ignore this
+p1
+write.csv(mhmerge_rename, "/Users/diegoflores/Documents/RBSI-Working-directory/mateo.csv") 
+#sharing data w mateo  
+  
+
+p1 <- ggplot(data = mhmerge_rename,
+             mapping = aes(x = margin_index, y = homiciderates, color = region)) +    
+               geom_point(size = 1) +                           
+               labs(x = "Marginalization Index", 
+                    y = "Homicide rate per 100,000", 
+                    title = "Correlation Between Marginalization Levels and Drug War Homicides", 
+                    subtitle = "Data points are homicide rates per 100,000 people",
+                    caption = "Source: Princeton Empirical Studies of Conflict") + 
+  ylim(0, 750)
+p1
+#this is the plot for mhmerge rename w deaths total not homicide rate per 100k, do this for mhmerge_nj
+p1 <- ggplot(data = mhmerge_nj,
+             mapping = aes(x = margin_index, y = homiciderates, color = region)) +    
+  geom_point(size = 1) +                           
+  labs(x = "Marginalization Index", 
+       y = "Homicide rate per 100,000", 
+       title = "Correlation Between Marginalization Levels and Drug War Homicides", 
+       subtitle = "Data points are homicide rates per 100,000 people",
+       caption = "Source: Princeton Empirical Studies of Conflict") + 
+  ylim(0, 750)
+p1
+
+
+#transformations
+mhmerge_rename$loghom <- log(mhmerge_rename$deaths_total + 1) #ignore this
+mhmerge_rename$population <- as.numeric(gsub(" ", "", mhmerge_rename$total_pop, fixed = TRUE)) 
+# transform total_pop to  to numeric
+mhmerge_rename$homiciderates <- (mhmerge_rename$deaths_total / mhmerge_rename$population) * 100000 
+#creating homiciderates per 100k for rename data
+
+mhmerge_nj$population <- as.numeric(gsub(" ", "", mhmerge_nj$total_pop, fixed = TRUE)) 
+#nj pop data now has numeric value
+mhmerge_nj$homiciderates <- (mhmerge_nj$deaths_total / mhmerge_nj$population) * 100000  
+#added homiciderates per100k variable to nj
+
+
+ 
+
+# New variable - region
+region <- list(northwest = c(02, 03, 18, 25, 26), north = c(08, 05, 10, 32, 24), northeast = c(19, 28),
+central_west = c(06, 11, 14, 16, 01), south_central = c(09, 13, 15, 17, 21, 22, 29), gulf = c(27, 30), peninsula = c(04,23, 31)) 
+rm(egion) 
+mhmerge_rename$region <- "southcentral"
+mhmerge_rename$region[mhmerge_rename$state_code == c(02, 03, 18, 25, 26)] <- "northwest"
+mhmerge_rename$region[mhmerge_rename$state_code == c(08, 05, 10, 32, 24)] <-"north"
+mhmerge_rename$region[mhmerge_rename$state_code == c(19, 28)] <- "north"
+mhmerge_rename$region[mhmerge_rename$state_code == c(01, 06, 11, 14, 16)] <-  "central_west"
+mhmerge_rename$region[mhmerge_rename$state_code == c(27, 30)] <- "gulf"
+mhmerge_rename$region[mhmerge_rename$state_code == c(04,23, 31)] <- "peninsula"
+
+# No Juarez 
+mhmerge_nj <- subset(mhmerge_rename, municip_code != 8037) #no juarez outlier
+
+
+```
+
+```{r}
+
+```
+
+```{r regression-models}
+#Regression 
+model1 <- lm(deaths_total ~ margin_index + as.factor(state_code), data = mhmerge_nj) #regression w total deaths
+model2 <- lm(deaths_execution ~ margin_index, data = mhmerge_nj) #regression w deaths from execution
+model3 <- lm(deaths_confront ~ margin_index, data = mhmerge_nj) #deaths from confrontation
+model4 <- lm(deaths_aggression ~ margin_index, data = mhmerge_nj) #deaths from aggression 
+summary(model1) 
+stargazer(model1, model2, model3, model4, type = "text") 
+
+model1 <- lm(homiciderates ~ margin_index + as.factor(state_code), data = mhmerge_nj)
+
+regressiontable1 <- tbl_regression(model1) print(regressiontable)
+
+stargazer(model1, out = "regression1.txt")
+```
