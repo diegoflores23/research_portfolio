@@ -1,0 +1,11 @@
+/* Variables */
+$font-main: helvetica-neue, helvetica, sans serif:
+$primary-text-color: #1a1a1a;
+$caption-color: #666666;
+$color-bg: #ffffff /* pure white background */
+
+/*base styles */
+body {
+  font-family: $font-main;
+  color: $primary-text-color;
+}
