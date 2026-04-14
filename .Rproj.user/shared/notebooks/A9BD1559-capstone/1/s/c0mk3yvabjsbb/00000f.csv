@@ -1,0 +1,3 @@
+"0","bx1 <- boxplot(incacs16$total_jail_pop_rate, "
+"0","        xlab = ""Distribution of U.S. jail rate per 100k"", "
+"0","        ylim = c(0,2000))"

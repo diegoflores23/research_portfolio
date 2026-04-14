@@ -1,0 +1,2 @@
+"0","inc_sub %>% kbl(caption = ""Incarceration dataframe preview"") %>% # Print table"
+"0","  kable_classic(full_width = F, html_font = ""Cambria"")"

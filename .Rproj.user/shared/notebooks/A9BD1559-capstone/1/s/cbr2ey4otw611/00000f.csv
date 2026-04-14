@@ -1,0 +1,4 @@
+"0","densityplot(incarceration_mice,     # dist. lines are similar, meaning imputed data are consistent among "
+"0","                  ~total_jail_pop_rate, # observed and imputed data "
+"0","           xlim = c(0, 5000), "
+"0","           main = ""Imputed distribution (red) against original distribution (blue)"")   "

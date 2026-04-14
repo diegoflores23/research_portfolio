@@ -1,0 +1,7 @@
+"0","chciindex <- function(data_frame) {       #takes a data_frame as input, returns newly calc variable"
+"0","  chci <- ((50* data_frame$ed_below9e + 100*data_frame$ed_hsnodip_e + # assigning new variable chci  "
+"0","            120*data_frame$ed_hsdip_e + 130* data_frame$ed_scollege_e + "
+"0","            140* data_frame$ed_associate_e + 190*data_frame$ed_bachelor_e + #must specify to look into a df, find these vars"
+"0","              230*data_frame$graddeg_higher_e))/ 100    # named variables, hence 'df$variable name'"
+"0","  return(chci)"
+"0","}"

@@ -1,0 +1,3 @@
+"0","partialPlot(rf1, pred.data = train_data, fam_poverty_perc_e,  #single partial imp plot"
+"0","            plot = TRUE, rug = TRUE,"
+"0","            main=paste(""Partial Dependence of Jail rate on % of families facing poverty""))"

@@ -1,5 +1,4 @@
 ---
-title: "UCLA Labor Research"
+title: ""
 format: html
 ---
-

@@ -1,0 +1,7 @@
+"0","inc_sub <- incarceration[1:15, 2:20]"
+"0",""
+"0","inc_sub %>%"
+"0","  kbl(caption = ""Incarceration dataframe preview"") %>%"
+"0","  kable_classic(full_width = F) %>% "
+"0","  save_kable(file = ""incarcerationtable1.html"", self_contained = T, # save table "
+"0","             html_font = ""Cambria"")"

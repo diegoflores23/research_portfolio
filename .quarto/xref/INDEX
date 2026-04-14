@@ -22,5 +22,11 @@
   },
   "resume.qmd": {
     "resume.html": "5ef153e3"
+  },
+  "capstone.qmd": {
+    "capstone.html": "3270111e"
+  },
+  "projects/capstone.qmd": {
+    "capstone.html": "90916f57"
   }
 }

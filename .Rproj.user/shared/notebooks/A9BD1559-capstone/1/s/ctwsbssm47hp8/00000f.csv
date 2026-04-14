@@ -1,0 +1,48 @@
+"0","boroughs <- acs16 %>% filter(fips %in% c(36005, # Join NY boroughs into one county -- replicate"
+"0","                   36047, 36061, 36081, 36085)) # incarceration16"
+"0","# Aggregate columns, due to different types of obsv must summarise each group of cols diff"
+"0","raw_columns <- c(4:10, 12:14, 16:26) # Raw columns"
+"0","median_columns <- c(15, 31)          # Median columns"
+"0","perc_avg_columns <- c(3, 11, 27:30)  # Percent average columns "
+"0",""
+"0","ny_aggregate <- boroughs %>% # Summarize the data frame"
+"0","  summarise("
+"0","    across(all_of(raw_columns), sum),"
+"0","    across(all_of(median_columns), median),"
+"0","    across(all_of(perc_avg_columns), mean)"
+"0",")"
+"0","print(ny_aggregate)"
+"1","[38;5;246m# A tibble: 1 × 29[39m
+"
+"1","  graddeg_higher_e ed_below9e ed_hsnodip_e ed_hsdip_e ed_scollege_e ed_associate_e ed_bachelor_e
+"
+"1","             [3m[38;5;246m<dbl>[39m[23m      [3m[38;5;246m<dbl>[39m[23m        [3m[38;5;246m<dbl>[39m[23m      [3m[38;5;246m<dbl>[39m[23m         [3m[38;5;246m<dbl>[39m[23m          [3m[38;5;246m<dbl>[39m[23m         [3m[38;5;246m<dbl>[39m[23m
+"
+"1","[38;5;250m1[39m           [4m8[24m[4m7[24m[4m2[24m987     [4m5[24m[4m7[24m[4m9[24m784       [4m5[24m[4m4[24m[4m4[24m697    1[4m4[24m[4m0[24m[4m2[24m714        [4m8[24m[4m2[24m[4m9[24m201         [4m3[24m[4m7[24m[4m5[24m851       1[4m2[24m[4m4[24m[4m6[24m538
+"
+"1","[38;5;246m# ℹ 22 more variables: disable_pop_e <dbl>, foreign_born_e <dbl>, non_citizen_pop_e <dbl>,[39m
+"
+"1","[38;5;246m#   hslatino_pop_e <dbl>, amindian_pop_e <dbl>, asian_pop_e <dbl>, black_pop_e <dbl>,[39m
+"
+"1","[38;5;246m#   nat_hawaiian_pop_e <dbl>, other_race_pop_e <dbl>, white_pop_e <dbl>, hh_family_e <dbl>,[39m
+"
+"1","[38;5;246m#   hh_married_e <dbl>, hh_single_father_e <dbl>, hh_single_mother_e <dbl>, hh_medincome_e <dbl>,[39m
+"
+"1","[38;5;246m#   median_rent_e <dbl>, avg_hhsize_e <dbl>, hischool_more_e <dbl>, fam_poverty_perc_e <dbl>,[39m
+"
+"1","[38;5;246m#   ppl_poverty_perc_e <dbl>, poverty_singl_mothr_perc_e <dbl>, unemploy_rate_e <dbl>[39m
+"
+"0","#aggregate the sumarised rows into one ny county "
+"0","ny_aggregate <- ny_aggregate %>%"
+"0","  mutate(fips = 36061, name = ""New York County"")"
+"0",""
+"0","ny_aggregate <- ny_aggregate %>% #reorder columns! "
+"0","  select(fips, name, everything()) %>% "
+"0","  mutate(fips = as.character(fips),"
+"0","         name = ""New York County"")"
+"0",""
+"0","# remove the 5 boroughs from acs 16"
+"0","acs16 <- acs16 %>% filter(!fips %in% c(36005,"
+"0","                                             36047, 36061, 36081, 36085))"
+"0",""
+"0","acs16 <- bind_rows(acs16, ny_aggregate)"

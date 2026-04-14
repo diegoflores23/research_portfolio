@@ -1,0 +1,5 @@
+"0","incrf <- incacs16 %>%  # Note: the RF model is ran w/ out outliers"
+"0","  select(-c(1:3, 5, 7:17, 30)) #excluded: fips, state, prison rate, white etc. "
+"0","train_index <- sample(seq_len(nrow(incrf)), size = 0.7 * nrow(incrf))"
+"0","train_data <- incrf[train_index, ]"
+"0","test_data <- incrf[-train_index, ]"

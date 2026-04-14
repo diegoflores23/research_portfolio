@@ -1,0 +1,2 @@
+"0","stripplot(incarceration_mice, # pch: shape of the point "
+"0","                 pch = 1, cex = 1, main = ""Imputation diagnostic strip plot"")"

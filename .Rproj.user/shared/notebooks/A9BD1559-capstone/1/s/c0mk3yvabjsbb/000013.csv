@@ -1,0 +1,6 @@
+"0",""
+"0","h <- ggplot(incacs16, aes(x=total_jail_pop_rate)) + geom_histogram()+ xlim(0, 2000) + theme_minimal()"
+"0","h1 <-  ggplot(incacs16, aes(x=total_prison_pop_rate)) + geom_histogram() + xlim(0,2000) + theme_minimal()"
+"0","h2 <- ggplot(incacs16, aes(x=female_jail_pop_rate)) + geom_histogram() + xlim(0, 600) + theme_light()"
+"0","h3 <- ggplot(incacs16, aes(x=male_jail_pop_rate)) + geom_histogram() +xlim(0,2000) +theme_minimal()"
+"0","grid.arrange(h, h1, h2, h3, ncol = 2)"

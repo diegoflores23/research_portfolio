@@ -1,0 +1,26 @@
+"0","narow <- acs16[!complete.cases(acs16),] #acs16 w/ in the df look 4 complete cases in all rows, but negated so it will get the not complete cases (NAs)"
+"0","print(narow) "
+"1","[38;5;246m# A tibble: 2 × 31[39m
+"
+"1","  fips  name         avg_hhsize_e graddeg_higher_e ed_below9e ed_hsnodip_e ed_hsdip_e ed_scollege_e
+"
+"1","  [3m[38;5;246m<chr>[39m[23m [3m[38;5;246m<chr>[39m[23m               [3m[38;5;246m<dbl>[39m[23m            [3m[38;5;246m<dbl>[39m[23m      [3m[38;5;246m<dbl>[39m[23m        [3m[38;5;246m<dbl>[39m[23m      [3m[38;5;246m<dbl>[39m[23m         [3m[38;5;246m<dbl>[39m[23m
+"
+"1","[38;5;250m1[39m 15005 Kalawao Cou…         1.45               16          2            6         31            11
+"
+"1","[38;5;250m2[39m 48101 Cottle Coun…         2.3                51        124          178        330           228
+"
+"1","[38;5;246m# ℹ 23 more variables: ed_associate_e <dbl>, ed_bachelor_e <dbl>, hischool_more_e <dbl>,[39m
+"
+"1","[38;5;246m#   disable_pop_e <dbl>, foreign_born_e <dbl>, non_citizen_pop_e <dbl>, hh_medincome_e <dbl>,[39m
+"
+"1","[38;5;246m#   hslatino_pop_e <dbl>, amindian_pop_e <dbl>, asian_pop_e <dbl>, black_pop_e <dbl>,[39m
+"
+"1","[38;5;246m#   nat_hawaiian_pop_e <dbl>, other_race_pop_e <dbl>, white_pop_e <dbl>, hh_family_e <dbl>,[39m
+"
+"1","[38;5;246m#   hh_married_e <dbl>, hh_single_father_e <dbl>, hh_single_mother_e <dbl>,[39m
+"
+"1","[38;5;246m#   fam_poverty_perc_e <dbl>, ppl_poverty_perc_e <dbl>, poverty_singl_mothr_perc_e <dbl>,[39m
+"
+"1","[38;5;246m#   unemploy_rate_e <dbl>, median_rent_e <dbl>[39m
+"

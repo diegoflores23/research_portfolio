@@ -1,0 +1,6 @@
+"0","imp <-  importance(rf1)"
+"0",""
+"0","impdf <- as.data.frame(imp)"
+"0","impdf$Variables <- rownames(impdf)"
+"0","impdf <- impdf %>%         # simply making impotance into a df, rearranging in descending order"
+"0","  arrange(desc(`%IncMSE`)) # backticks here bcus calling variable w/ % on it "

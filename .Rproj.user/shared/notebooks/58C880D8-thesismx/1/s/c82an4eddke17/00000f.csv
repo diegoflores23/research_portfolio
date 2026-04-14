@@ -1,0 +1,4 @@
+"0","mhmerge <- merge(marginsub2, homicidesub2, by.x = c(""municipality code""), by.y = c(""idunico"")) #merged data by INEGI code* 
+"
+"2","Error: object 'marginsub2' not found
+"

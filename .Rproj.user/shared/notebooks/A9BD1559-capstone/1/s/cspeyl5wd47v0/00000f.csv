@@ -1,0 +1,4 @@
+"0","# Visualize missingness - incarceration data "
+"0","na1 <- gg_miss_var(incarceration, "
+"0","            show_pct = TRUE) + labs(title = ""Missing Value by Variable"")"
+"0","na1"

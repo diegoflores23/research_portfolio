@@ -1,0 +1,6 @@
+"0","incarceration_complete <- complete(incarceration_mice, 1) # this is completing the data using incarceration_num2 and completing it w mice df (mice df is inc_num but imputed) "
+"0","pmiss(incarceration_complete) #0 NA's"
+"1","[1]"
+"1"," 0"
+"1","
+"

@@ -1,0 +1,5 @@
+"0","# MERGE III - success "
+"0","incarceration_acs16 <- left_join(incarceration16, acs16, by = ""fips"")"
+"0","#check NA below "
+"0","gg_miss_var(incarceration_acs16, "
+"0","            show_pct = FALSE) + labs(title = ""Missing value by variable of merged dataframe"")"

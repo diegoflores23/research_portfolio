@@ -1,0 +1,3 @@
+"0","density <- densityplot(incarceration_mice, "
+"0","            main = ""Density plot for all imputed variables"") "
+"0","density"

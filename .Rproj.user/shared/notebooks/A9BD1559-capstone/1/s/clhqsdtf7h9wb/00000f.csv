@@ -1,0 +1,8 @@
+"0","#bwplot(incarceration_mice) # side by side box whiskey plot for observed and imputed data "
+"0",""
+"0","# Merge II "
+"0","identifiers <- incarceration %>% select(2:5) #select identifier cols from original df incarceration"
+"0",""
+"0","incarceration16 <- identifiers %>%  #incarceration is identifiers passed to a left join imputed data set merge"
+"0","                              left_join(incarceration_complete, by = ""fips"")"
+"0","# pmiss(incarceration16) # Success - incarceration df is imputed, ready to be merged w/ acs, most updated"

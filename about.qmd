@@ -2,10 +2,10 @@
 title: "About"
 ---
 
-Hello! I'm an early career researcher whose work employs quantitative methodologies in answering critical research questions. I graduated from Pitzer College in 2022 with a B.A. in Political Science (Honors) where I found a passion in researching critical social phenomena with data and quantitative methods. I furthered this research drive through a Fulbright Garcia Robles Fellowship at UNAM, Mexico's national university, and a data science certificate from UCLA extension (Prof. William Yu). In my prior role at UCLA's Labor Occupational Safety & Health (LOSH) program I researched
+Hello! I'm an early career researcher whose work uses quantitative methodologies in answering critical research questions. I graduated from Pitzer College in 2022 with a B.A. in Political Science (Honors) where I found a passion in researching critical social phenomena with data and quantitative methods. I furthered this research drive through a Fulbright Garcia Robles Fellowship at UNAM, Mexico's national university, and a data science certificate from UCLA extension (Prof. William Yu). In my prior role at UCLA's Labor Occupational Safety & Health (LOSH) program I researched
 
-In my free time I enjoy writing on contemporary culture and aesthetics, basketball, and painting.
+In my free time I enjoy writing on contemporary culture and aesthetics, playing basketball, and painting.
 
 ------------------------------------------------------------------------
 
-This site was made by me using Quarto via RStudio.
+This site was coded in Quarto via RStudio.

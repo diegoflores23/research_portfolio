@@ -1,0 +1,361 @@
+---
+title: "Exploring the relationship between poverty and homicide rates from the Mexican War on Drugs"
+format: html
+execute: 
+  eval: false
+---
+
+This project contains the code belonging to both an honors thesis and a fulbright garcia robles fellowship while I worked at UNAM, Mexico's National University. You can read the full paper here.
+
+```{r setup-import-data}
+library(readr)
+library(ggplot2)
+library(janitor)
+library(tidyverse)
+library(foreign)
+library(haven)
+library(readxl)
+library(dplyr)
+library(janitor)
+library(stargazer)
+library(kableExtra)
+library(infer)
+library(broom)
+library(xtable)
+# install.packages(DataExplorer) 
+library(DataExplorer)
+install.packages("cheatsheet")
+library(cheatsheet)
+
+library(sjPlot)
+library(sjmisc)
+library(sjlabelled)
+
+
+library(tidyverse)
+library(knitr)
+library(foreign)
+library(stringr)
+library(MatchIt)
+library(naniar)
+# install.packages("arsenal")
+library(arsenal)
+# install.packages("vtable")
+library(vtable)
+#Marginalization data 
+marginalization2 <- read.csv("data_raw/marg_index_06anexo_base.csv") #marg by municipality 2010, columns str are not characters
+str(marginalization2)   #2463 obs. of  15 variables, variables are all correct type
+sum(is.na(marginalization2)) 
+
+#Homicide data
+esochomicide <- read_dta("data_raw/ESOC_Mexico_drug_related_murders.dta") #all homicide data 2006- 11 
+homicidesub <- esochomicide %>% 
+    filter(year == 2010)    #subset ESOC homicide data for 2010 values
+homicidesub2 <- homicidesub[,c("idunico", "deaths_total",
+                                 "deaths_execution", "deaths_confront", "deaths_aggression")] 
+#sum(is.na(homicidesub2))  
+```
+
+```{r dataset-merge, echo=FALSE}
+#marginalization + homicides = primary df
+marg_homicide_df <- read.csv("data_raw/mateo.csv") 
+ marg_homicide_df_rename <- rename(marg_homicide_df, muncode = municip_code)
+  sum(is.na(marg_homicide_df$deaths_total)) #checking for missing values w/ is.na,
+```
+
+```{r}
+#Loading control variable data 
+
+#Primary control variables
+mex_variables <- read_dta("/Users/diegoflores/Poli_90_intro_2/Prof_Bezares_mex_vars_2010.dta") #df w controls including:km^2 of municipality, transfers (central to municipio), etc
+  View(mex_variables) 
+  str(mex_variables)
+  summary(mex_variables)
+
+mex_variables_2 <- subset(mex_variables, 
+                          select = -c(1, 7:11, 15:21, 23:36))  #with out dummy variables 
+
+  colSums(is.na(mex_variables_2))                       #checks total number of NA values by column 
+  mex_variables_2[mex_variables_2 == 0] <- NA           #replaces ) with NA values 
+                                                        #removed dummy variable in above subset in                                                            order to replace 0's with NA
+  #check for dummy variables again
+  colSums(is.na(mex_variables_2)) #make sure that govt transfer value of 0 means NA and not zero transfer.. it probably does so use mex variables 3
+  
+  # Check for Duplicates 
+mex_variables_2[duplicated(mex_variables_2$muncode),] 
+  duplicated(mex_variables_2$muncode) #this omits 1463 entries 
+  sum(duplicated(mex_variables_2$muncode)) #0 duplicates 
+  
+#Most up to date df so far, 10  varibales 
+mex_variables3 <- subset(mex_variables, select = -c(1, 7:11, 15:21, 23:33))  
+  colSums(is.na(mex_variables3))
+  #13 variables total, includes political party vars
+  #mex variables3 and marg_homicide_df are principal & most up to date
+  
+#Govt Transfers 
+mex_variables3$govt_transfer <- mex_variables$"aportaciones" + mex_variables$"participaciones"  #added new column total gov transfer to mex_variable3 da
+```
+
+```{r}
+mhmerge <- merge(marginsub2, homicidesub2, by.x = c("municipality code"), by.y = c("idunico")) #merged data by INEGI code* 
+table(mhmerge$deaths_total)
+sum(is.na(mhmerge$deaths_total)) 
+mhmerge_rename <- rename(mhmerge, municip_code = "municipality code", state_code = "state code", marg_grade = "marginalization grade", margin_index = IM, total_pop = "total population") 
+# renamed variables, new df
+```
+
+```{r}
+marg_homicide_df_rename$total_govt_transfer <-mex_variables3$total_govt_transfer #add govt transfer column from mexvariables3 to this df
+
+#Road Access
+road_access <- read.csv("/Users/diegoflores/Poli_90_intro_2/recovered_202203281742/unsaved/coneval_road_access.csv")
+  road_access2 <- subset(road_access, 
+                         select = -c(clave_entidad, 
+                                     entidad_federativa, municipio,
+                                     poblacion_2010))
+  road_access3 <- rename(road_access2, 
+                         muncode = clave_municipal, 
+                         percent_road_access = porc_pob_acce_muy_baja_o_baja)
+  rm(road_access)
+  rm(road_access2)
+  road_access3[complete.cases(road_access3), ]                 # Keep only the complete rows, removes last two 2 rows 
+road_access4 <- road_access3[complete.cases(road_access3), ] # Store the complete cases subset in a new data frame
+  colSums(is.na(road_access4))                                 #0 NA values. Dont replace 0s. 0's mean no percentage has difficulty                                                                  accessing paved roads 
+marg_homicide_df$percent_road_access <- road_access4$percent_road_access  #add road access to primary dataframe
+  rm(road_access4)  
+#subset: removed repetitive column names to merge both dfs into full df 
+  
+# MARIJUANA SEIZURES 
+marijuana_seizures <- read_dta("/Users/diegoflores/Poli_90_intro_2/Thesis_data/marihuana_1990_2016.dta")
+    str(marijuana_seizures)
+    summary(marijuana_seizures)
+  marijuana_seizures_sub <- marijuana_seizures %>% filter(year == 2010) #filter for year 2010 
+  marijuanasub2 <- subset(marijuana_seizures_sub, select = -c(id_state, state, municipio, munseat)) #remove repetitive columns 
+  marijuanasub2                 #only 3 variables now: year, muncode, and seizures 
+                                #add mj sub 2 to mex variables3
+mex_variables3$marijuana_seizures <- marijuanasub2$marihuana
+
+# POP DENSITY 
+mex_variables3$pop_density <- mex_variables3$"population" / mex_variables3$"areakm2"  #take total population and divide by municipal measure of square kilometers
+
+#Create homicide rate variable from deaths total
+mhmerge_controls2_nj$homicide_rates10k <- (mhmerge_controls2_nj$deaths_total / mhmerge_controls2_nj$population) * 10000
+mhmerge_controls2_nj$homicide_rates100k <- (mhmerge_controls2_nj$deaths_total / mhmerge_controls2_nj$population) * 100000
+
+#IMPORTANT MERGE below #main df is mhmerge_controls2
+marg_homicide_df_rename <- rename(marg_homicide_df, muncode = municip_code) #The issue is here where this df doesnt have homicide_per_100k variable instead has deaths disagregated. MAKE a homicide variable. im completely missing it. issue solved, maindf now has homicide_rates100k variable
+summary(marg_homicide_df_rename)
+mhmerge_controls2 <- left_join(marg_homicide_df_rename, mex_variables3, by= 'muncode') #leftjoin merge                                                                                               control to main df  
+# WITHOUT OUTLIER 
+mhmerge_controls2_nj <- subset(mhmerge_controls2, muncode != 8037) 
+  summary(mhmerge_controls2_nj)
+#NEW DF delete later
+  marg_hom_deaths <- subset(mhmerge_controls2_nj, 
+                            select = -c(1, 9:12, 14:16, 18, 21:23, 25:27, 30:32))
+summary(marg_hom_deaths)
+  marg_hom_deaths2 <- marg_hom_deaths %>% 
+    arrange(desc(homicide_rates100k)) %>% 
+    group_by(muncode) 
+  
+marg_hom_deaths2.1 <- subset(marg_hom_deaths2, 
+                             select = -c(4, 10:12))
+
+  marg_hom_deaths3 <- marg_hom_deaths %>% 
+    arrange(desc(deaths_total)) %>% 
+    group_by(muncode) 
+
+#Log Transformations WITH OUTLIER 
+mhmerge_controls2$loghomicide <- log(mhmerge_controls2$deaths_total + 1)
+#Homicide Rates transformation w outlier 
+mhmerge_controls2$homicide_rates10k <- (mhmerge_controls2$deaths_total / mhmerge_controls2$population) * 10000
+mhmerge_controls2$homicide_rates100k <- (mhmerge_controls2$deaths_total / mhmerge_controls2$population) * 100000 
+
+# NO OUTLIER
+#Log tranformation of deaths total for NJ
+  mhmerge_controls2_nj$loghomicide <- log(mhmerge_controls2_nj$deaths_total + 1)
+
+#More Log transformations 
+mhmerge_controls2_nj$log_govt_transfer <- log(mhmerge_controls2_nj$total_govt_transfer + 1)
+mhmerge_controls2_nj$logpop_density <- log(mhmerge_controls2_nj$pop_density + 1) #also attempt to run regression with popn_10k vs pop density 
+mhmerge_controls2_nj$log_percent_road_access <- log(mhmerge_controls2_nj$percent_road_access + 1)
+mhmerge_controls2_nj$log_gdp_usd <- log(mhmerge_controls2_nj$gdp_usd + 1)
+
+# New variable - region  
+mhmerge_controls2_nj <- mhmerge_controls2_nj %>%  
+  mutate(region = case_when(state_code %in% c(1, 6, 11, 14, 16, 18, 22, 24, 32) ~ 'central_west',
+                            state_code %in% c(9, 12, 13, 15, 17, 21, 29, 20) ~ 'central',
+                            state_code %in% c(2, 3, 5, 8,  10, 19, 25, 26, 28) ~ 'north',
+                            state_code %in% c(4, 7, 23, 27, 30, 31) ~ 'southeast'))
+ 
+## Summary Statistics ## 
+labs <- data.frame(ogname = c('margin_index', 'deaths_total', 
+                              'population','homicide_rates100k', 'marijuana_seizures'),
+                  newname = c('Marginalization Index','Total Homicides',
+                              'Population','Homicides per 100k', 'Marijuana Seizures'))
+
+sumtable(mhmerge_controls2_nj, vars = c('margin_index','deaths_total', 
+                                        'population','homicide_rates100k', 'marijuana_seizures'), digits = 3, labels=labs, out='htmlreturn', file ='thesis_summarystat', title = 'Table 1')
+getwd()
+   summ = list(
+           c('notNA(x)','mean(x)','min(x)','max(x)'))
+   
+
+
+##Plot 1 
+p1 <- ggplot(data = mhmerge_controls2_nj) + 
+  aes(x = margin_index, y = homicide_rates100k, color = region) +    
+               geom_point(size = 1.4, alpha = 0.4) +
+               labs(x = "Marginalization Index", 
+                    y = "Homicide rate per 100,000",
+                    title = "Marginalization Levels and Drug War Homicides", 
+                    subtitle = "Data points are homicide rates per 100,000 people",
+                    caption = "Source: Princeton Empirical Studies of Conflict")
+p1 
+p1 + ylim(0, 715) #Zooming into plot 
+
+p1.2 <- ggplot(data = mhmerge_controls2_nj) + 
+  aes(x = margin_index, y = deaths_total, color = region) +    
+               geom_point(size = 1.4, alpha = 0.4) +
+               labs(x = "Marginalization Index", 
+                    y = "Total Homicides",
+                    title = "Marginalization Levels and Drug War Homicides", 
+                    subtitle = "Data points are individual homicides",
+                    caption = "Source: Princeton Empirical Studies of Conflict")
+p1.2
+
+#Running average - 'loess'
+# Plot 1 still 
+p1 + ylim(0, 715) +
+  geom_smooth(method = "loess", se = FALSE)
+p1 +  
+  ylim(0, 400) + coord_cartesian(xlim = c(-2.2, 3.8)) + geom_smooth(method = "loess") + 
+  geom_jitter() +
+  facet_wrap(~region) 
+p1 +  
+  ylim(0, 715) + coord_cartesian(xlim = c(-2.2, 3.8)) + geom_smooth(method = "loess") + 
+  geom_jitter() +
+  facet_grid(region~.)
+p1 +  
+  ylim(0, 25) + coord_cartesian(xlim = c(-2.2, 3.8)) +  geom_smooth(method = "loess") +
+  geom_jitter() +
+  facet_wrap(.~region)
+
+# install.packages("devEMF") # if not installed already
+library(devEMF)
+tmp_file <- "EMF_plot.emf"
+# ?emf # if needed
+emf(file= tmp_file, pointsize= 10, width= 5, height= 3) # Opens a device
+temp_margins <- c(1.5, 2.3, 0.5, 0.2) # Adjust margins
+par(mfrow = c(1,1), mar = temp_margins,
+    mgp=c(0.6, 0.3, 0),  tcl = -0.15, las = 1)
+plot(p1 + ylim(0, 715) +
+  geom_smooth(method = "loess", se = FALSE)) # create your plot
+grid(col= "grey")
+dev.off()  # Close the device
+
+#linear 
+p1 +  
+  ylim(0, 600) + coord_cartesian(xlim = c(-2.2, 3.8)) + geom_smooth(method = "lm") + 
+  facet_wrap(~region) 
+
+#Homicides as a function of distance to US border 
+p2 <- ggplot(data = mhmerge_controls2_nj) + 
+  aes(x = dist_us_border, y = homicide_rates100k, color = region) +    
+               geom_point(size = 1.4, alpha = 0.4) +
+               labs(x = "Disatance to US Border", 
+                    y = "Homicide rate per 100,000",
+                    title = "Distance to US Border & Drug War Homicides", 
+                    subtitle = "Data points are homicide rates per 100,000 people",
+                    caption = "Source: Princeton Empirical Studies of Conflict") +
+                      ylim(0, 715) 
+p2
+
+#Homicide plotted against govt transfer
+p3 <- ggplot(data = mhmerge_controls2_nj) + 
+  aes(x = log_govt_transfer, y = homicide_rates100k, color = region) +    
+               geom_point(size = 1.4, alpha = 0.4) +
+               labs(x = "Log Government Transfers", 
+                    y = "Homicide rate per 100,000",
+                    title = "Government tranfers & Drug War Homicides", 
+                    subtitle = "Data points are homicide rates per 100,000 people",
+                    caption = "Source: Princeton Empirical Studies of Conflict") +
+                      ylim(0, 715) 
+p3
+#homicide plotted against population
+p4 <- ggplot(data = mhmerge_controls2_nj) + 
+  aes(x = popn_10k, y = homicide_rates100k, color = region) +    
+               geom_point(size = 1.4, alpha = 0.4) +
+               labs(x = "Population per 10,000", 
+                    y = "Homicide rate per 100,000",
+                    title = "Population per 10,000  & Drug War Homicides", 
+                    subtitle = "Data points are homicide rates per 100,000 people",
+                    caption = "Source: Princeton Empirical Studies of Conflict") +
+                      ylim(0, 300) + xlim(0,25)
+p4
+# Homicides and GDP 
+p5 <- ggplot(data = mhmerge_controls2_nj) + 
+  aes(x = gdp_usd, y = homicide_rates100k, color = region) +    
+               geom_point(size = 1.4, alpha = 0.4) +
+               labs(x = "GDP (USD)", 
+                    y = "Homicide rate per 100,000",
+                    title = "Municipal GDP & Drug War Homicides", 
+                    subtitle = "Data points are homicide rates per 100,000 people",
+                    caption = "Source: Princeton Empirical Studies of Conflict") +
+                      ylim(0, 250) + xlim(22000,0) +
+  coord_cartesian(xlim = c(21500,950))
+p5
+
+
+library(stargazer)
+library(sjPlot)
+library(sjmisc)
+library(sjlabelled)
+
+# W/ deaths total & outlier 
+model_outlier <- lm(deaths_total ~ margin_index, data  = marg_homicide_df)
+summary(model_outlier)
+
+# W/ homicide rate & outlier 
+model_outlier2 <- lm(homicide_rates100k ~ margin_index, data = mhmerge_controls2)
+summary(model_outlier2)
+
+#Base model - no outlier, no fixed effect
+model1 <- lm(homicide_rates100k ~ margin_index , data = mhmerge_controls2_nj)
+summary(model1)
+confint(model1)
+
+#hist(resid(model1))
+#qqnorm(resid(model1)) 
+#qqline(resid(model1))
+# Creating table
+#stargazer(basemodel1) # disable stargazer messages in header - isnt working 
+
+#BASE model - simple regression, no outlier, fixed effect
+model2 <- lm(homicide_rates100k ~ margin_index + as.factor(state_code), data = mhmerge_controls2_nj)
+summary(model2)
+confint(model2)
+
+# Multiple regression - no outlier
+         
+model3 <- lm(homicide_rates100k ~ margin_index + log_govt_transfer + popn_10k + log_percent_road_access + log_gdp_usd + as.factor(state_code), data = mhmerge_controls2_nj)
+summary(model3)
+confint(model3)
+
+model4  <-  lm(homicide_rates100k ~ margin_index + log_govt_transfer + popn_10k + log_percent_road_access + log_gdp_usd + marijuana_seizures + same_all + same_state_mun + same_mun_exec + as.factor(state_code), data = mhmerge_controls2_nj)
+summary(model4)
+confint(model4)
+
+model5  <-  lm(homicide_rates100k ~ margin_index +log_govt_transfer + popn_10k + log_percent_road_access + log_gdp_usd + marijuana_seizures + same_all + same_state_mun + same_mun_exec, data = mhmerge_controls2_nj)
+summary(model5) #multiple regression, no state FE 
+confint(model5)
+
+
+stargazer(model1, model2, model3, model4, model5, type = 'text')
+
+#Using Sjplot 
+tab_model(model1, model2, model3, model4, model5) 
+
+# regression output in html with output saved to file, good for word
+stargazer(model1, model2, model3, model4, model5, type = 'html', out = 'my_regression_table.html')
+stargazer(attitude)
+```

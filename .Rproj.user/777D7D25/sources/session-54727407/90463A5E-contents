@@ -1,0 +1,708 @@
+---
+title: "Analyzing incarceration rates & CES survey variables in the U.S"
+author: "Diego Flores"
+date: "April 2024"
+format: html
+---
+
+## Introduction
+
+This study is a look at the relationship between common household, socio-economic indicators and rates of incarceration at the county level in the United States in 2016. Specifically, this study seeks to answer these questions:
+
+> Why do some counties have higher incarceration rates? What socio-economic indicators predict higher incarceration rates?
+
+With this question in mind, it's important to define incarceration rates. This study specifically defines incarceration rates as the total jail population rates and total prison population rates in the US in 2016 at the county level. In this study, incarceration as the sum of both jail and prison rates is not the main dependent variable because I assume the possibility of difference in outcomes between jail and prison rates. Specifically, certain predictors may be more important in predicting prison or jail rates due to nuanced differences between the two institutions.
+
+### Data Sources
+
+Vera Incarceration Trends database & American Community Survey (ACS). Both of these data sets are publicaly available see links here: [link](https://github.com/vera-institute/incarceration-trends) & [link](https://www.census.gov/acs/www/data/data-tables-and-tools/data-profiles/2016/)
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, include = TRUE)
+library(corrplot)
+library(DT)
+library(ggcorrplot)
+library(tidycensus)
+library(tidyverse)
+library(viridis)
+library(mapview)
+library(writexl)    
+library(ggplot2)    
+library(dplyr)
+library(scales)
+library(usmap)
+library(RColorBrewer)
+library(janitor)
+library(readxl)
+library(naniar)
+library(mice)
+library(caret)
+library(VIM)
+library(stargazer)
+library(sjPlot)
+library(sjmisc)
+library(sjlabelled)
+library(kableExtra)
+library(webshot2)
+library(magick)
+# install.packages("randomForest")
+library(randomForest)
+#troubleshoot
+# install.packages(c("Rcpp", "RcppArmadillo", "dplyr"))
+# install.packages("mice", type = "binary")
+```
+
+### Loading Data
+
+```{r load_data, echo = FALSE, results = 'hide'}
+jail_jrsdct <- read.csv("data_raw/incarceration_trends_jail_jurisdiction.csv") %>% 
+  clean_names()
+jailcounty <- read.csv("data_raw/incarceration_trends.csv") %>% 
+  clean_names()
+str(jailcounty)
+```
+
+```{r dataframe_subset, results = 'hide', echo = FALSE}
+#Str detect for col names w/ string "jail" 
+jailvariables <- jailcounty %>% 
+  select(contains("jail")) # contains doesnt handle multiple patterns/reg expression.eg: jail | prison
+jailcounty <- jailcounty %>% 
+  rename(total_population = total_pop)
+
+# Select(matches) handles regular expressions, Select vars matching these strings
+# DF only standardized jail/prison rates not raw values, possibly include raw values for visuals 
+incarceration <- jailcounty %>%  #32 variables here 
+  subset(year =="2016") %>% 
+  select(matches("rate|population|county|state|year|fips")) #3139 x 30 
+str(incarceration)
+```
+
+```{r dfpreview, echo = FALSE, include = FALSE}
+inc_sub <- incarceration[1:15, 2:20]
+
+inc_sub %>%
+  kbl(caption = "Incarceration dataframe preview") %>%
+  kable_classic(full_width = F) %>% 
+  save_kable(file = "incarcerationtable1.html", self_contained = T, # save table 
+             html_font = "Cambria")
+```
+
+```{r echo = TRUE}
+inc_sub %>% kbl(caption = "Incarceration dataframe preview") %>% # Print table
+  kable_classic(full_width = F, html_font = "Cambria")
+```
+
+```{r correlation, eval = FALSE, include = FALSE}
+incarcer_num <- incarceration %>% 
+  select(-c(1:5)) #only numeric  
+corrmatrix <- cor(incarcer_num) #just not useable 
+
+#corrplot(corrmatrix, method = "color")
+#corrplot(corrmatrix, method = "number")
+#corrplot(corrmatrix, method = "square")
+#Corr plots arent informative due to NA values in the corr matrix 
+
+# corrmatrix <- cor(incarcer_num, use = "everything") # no good
+# corrmatrix2 <- cor(incarcer_num, use = "na.or.complete") 
+corrmatrix3 <- cor(incarcer_num, use = "pairwise.complete.obs") #best approach i suspet 
+
+corrplot(corrmatrix3, method = "color", title = "pairwise")
+#steps 6/2 820pm: check correlation before/ after imputation to see variable relationsips 
+# dropping prison data by race is tough.. but will impute on the total/ sex prison rates 
+#results: not very informative since the race specific jail/ prison vars are highl;y corr w total rates
+# to do: drops cols w NA>50, then impute those w NA < 50, merge dataset on county or fips 
+```
+
+### Dealing with missing values
+
+```{r na_values, echo = FALSE, out.width= "65%"}
+# Visualize missingness - incarceration data 
+na1 <- gg_miss_var(incarceration, 
+            show_pct = TRUE) + labs(title = "Missing Value by Variable")
+na1
+# ggsave("NA_values_plot.pdf", na1, width = 8, height = 6, dpi = 300)
+```
+
+Variables with more than 30% of missing values are dropped using the code below. It is not a great idea to impute on high NA variables because of the lack of reliability in imputing reliable data, since there is so little pre-existing data to base the imputation on.
+
+```{r results = 'hide'}
+# basic function to show % of NA values per variable 
+pmiss <- function(x){ sum(is.na(x))/length(x)*100
+  }
+na_percent <- apply(incarceration, 2, pmiss) #apply to df, 2 = rows, pmiss function
+print(na_percent) # check 
+
+### Remove columns w/ high % missing ###
+threshold <- 30  #set threshold 
+cols_to_rm <- names(na_percent[na_percent > threshold])  #
+print(cols_to_rm) #8 columns exceed 30% threshold
+
+incarceration <- incarceration[, !(names(incarceration) #only the cols not(!) listed in cols_to_rm kept
+                                                  %in% cols_to_rm)] #18 variables now
+```
+
+```{r include = FALSE}
+# subset for only numeric columns -- for corr plots 
+incarceration_num2 <- incarceration %>%  #subset only numeric variables to make corr plots below
+  select(-c(1,2,4,5))                   #keep fips in order to merge, left or right join 
+```
+
+```{r, eval = FALSE, include = FALSE}
+#Correlation plots after removing high NA cols - again not informative
+corrmatrix <- cor(incarceration_num2, use = "pairwise.complete.obs") #best approach  
+corrplot(corrmatrix, method = "color", title = "pairwise")
+
+corrmatrix2 <- cor(incarceration_num2, use = "complete.obs")
+corrplot(corrmatrix2, method = "color", title = "all obs")
+
+#seeing which variables have high correlation values w at least one other variable in the df 
+highcorr <- findCorrelation(corrmatrix, cutoff = 0.85)
+highcorr_name <- colnames(incarceration_num2)[highcorr]
+print(highcorr_name) 
+#total jail pop rate is highly correlated w one or more vars.. makes sense 
+```
+
+### Multiple Imputation using MICE
+
+Now that high Na columns are removed, our missing data is imputed using a straightforward multiple imputation.
+
+```{r mice_imputation, results = 'hide'}
+####MICE####
+predictor_matrix <- mice::make.predictorMatrix(incarceration_num2)
+
+# Identify the position of 'FIPS' column
+fips_col <- which(names(incarceration_num2) == "fips")
+
+# Set fips column in predictor matrix to 0, excludes from being used in imputation
+predictor_matrix[fips_col, ] <- 0
+predictor_matrix[, fips_col] <- 0
+
+incarceration_mice <- mice(incarceration_num2,m=5, #m=5, number of imputations
+                           meth='pmm', print = FALSE)  #method pmm
+summary(incarceration_mice)
+```
+
+```{r mice_imputation2}
+incarceration_complete <- complete(incarceration_mice, 1) # this is completing the data using incarceration_num2 and completing it w mice df (mice df is inc_num but imputed) 
+pmiss(incarceration_complete) #0 NA's
+```
+
+We can observe now the percent of missing values is 0.
+
+#### Imputation diagnostic checks
+
+```{r imputation_visual, echo = FALSE}
+density <- densityplot(incarceration_mice, 
+            main = "Density plot for all imputed variables") 
+density
+#they all look somewhat similar, exponential distribution
+```
+
+```{r, echo = FALSE, results = 'hide', include =FALSE}
+stripplot(incarceration_mice, # pch: shape of the point 
+                 pch = 1, cex = 1, main = "Imputation diagnostic strip plot")
+```
+
+```{r out.width= "65%"}
+densityplot(incarceration_mice,     # dist. lines are similar, meaning imputed data are consistent among 
+                  ~total_jail_pop_rate, # observed and imputed data 
+           xlim = c(0, 5000), 
+           main = "Imputed distribution (red) against original distribution (blue)")   
+```
+
+The distribution of the imputed and observed are similar. Distributional similarity is important despite the possibility of the model not fitting the data well.
+
+```{r echo = FALSE}
+#bwplot(incarceration_mice) # side by side box whiskey plot for observed and imputed data 
+
+# Merge II 
+identifiers <- incarceration %>% select(2:5) #select identifier cols from original df incarceration
+
+incarceration16 <- identifiers %>%  #incarceration is identifiers passed to a left join imputed data set merge
+                              left_join(incarceration_complete, by = "fips")
+# pmiss(incarceration16) # Success - incarceration df is imputed, ready to be merged w/ acs, most updated
+```
+
+### Loading & Wrangling ACS Data
+
+```{r load_acs, echo = FALSE, results = 'hide'}
+#census_api_key("761a2144f13835250654ac6a902995f8e8db6c63", install = TRUE, overwrite = TRUE)
+#readRenviron("~/.Renviron")   #reads an Renviron.site, 
+#Sys.getenv("CENSUS_API_KEY")  
+var16 <- load_variables(year = 2016,   # use acs16, most recent year for vera jail & prison data = 2016 
+                        'acs5/profile')# /profile retrieves data profiles 
+View(var16)
+
+acs16 <- get_acs(geography = "county", 
+                 variables = c(avg_hhsize = "DP02_0015", graddeg_higher = "DP02_0065", ed_below9 = "DP02_0059", ed_hsnodip = "DP02_0060", ed_hsdip = "DP02_0061", ed_scollege = "DP02_0062",ed_associate = "DP02_0063",ed_bachelor = "DP02_0064", hischool_more = "DP02_0066P", disable_pop = "DP02_0071" , foreign_born = "DP02_0093", non_citizen_pop = "DP02_0095", hh_medincome = "DP03_0062", hslatino_pop = "DP05_0066", amindian_pop = "DP05_0061", asian_pop = "DP05_0062", black_pop ="DP05_0060", nat_hawaiian_pop = "DP05_0063", other_race_pop = "DP05_0064", white_pop = "DP05_0059", hh_family = "DP02_0002", hh_married = "DP02_0004", hh_single_father= "DP02_0006", hh_single_mother = "DP02_0008", fam_poverty_perc = "DP03_0119P", ppl_poverty_perc = "DP03_0128P", poverty_singl_mothr_perc = "DP03_0125P", unemploy_rate = "DP03_0009P", median_rent = "DP04_0134"), output = "wide",  year = 2016)
+```
+
+```{r load_acs2, results = 'hide', echo = FALSE}
+pmiss(acs16) # 8676.667 NA's before removing margin of error (MOE) values 
+
+acs16 <- acs16 %>% 
+  select(-ends_with("M")) %>% # Remove all cols ending with M (MOE)
+  clean_names()           
+print(colnames(acs16)) # Check -- Success, only estimate columns are left  
+```
+
+There is approximately 8676 NA values in the untouched ACS dataset, about half of which are Margin of error estimate values. For the sake of simplicity, these values are removed but remain an important source for statistical testing if needed.
+
+```{r acs_wrangling, echo = FALSE}
+pmiss(acs16)
+
+### NA Visualization ### 
+gg_miss_var(acs16, 
+            show_pct = TRUE) + labs(title = "Missing Value by Variable")
+```
+
+After removing margin of error values approximately 2.4% of data is missing in numerous variables, suggesting the values are missing not at random (MNAR), that is, the Na values observe a pattern. This is further visualized by the black strip of missing data in the figure below
+
+```{r acs_wrangling2, results = 'hide', echo = FALSE}
+na_percent_acs <- apply(acs16, 2, pmiss) #apply to df, 2 = rows, pmiss function
+print(na_percent_acs)
+```
+
+```{r acs_na_visual, out.width= "75%"}
+vis_miss(acs16, sort_miss =  TRUE)
+```
+
+At this point the incarceration data set has zero NA's but ACS data observes a structured NA pattern. What exactly are these NA's? To deal with this I took an anti_join approach (by FIPS) to see what counties from the ACS data don't have a corresponding value in the incarceration trends data set.
+
+Before the anti_join, the FIPS columns in the incarceration data frame must be standardized to 5 digits since some values only have 4 FIPS digits. To solve this, a leading zero was added to the 4 digit FIPS columns using an ifelse logical within the mutate function.
+
+```{r anti_join}
+incarceration16 <- incarceration16 %>%   # Add leading zero to FIPS w only 4 numbers for consistent 
+  mutate(fips = ifelse(nchar(fips) == 4, # FIPS id across both dataframes  
+                       paste0("0", fips), fips)) #if # of chr == 4 paste 0 to fips, else leave fips
+acs16 <- acs16 %>% 
+ rename(fips = geoid)  #rename ACS geoid column to fips  
+
+# Asses which values do not match among both dfs
+incarceration_acs_temp <- anti_join(acs16, 
+                                    incarceration16, by = "fips") # 82 rows do not match 
+```
+
+As mentioned, creating an anti join data frame allows one to see the columns without a corresponding FIPS id in the incarceration dataframe. By doing so it was evident that when calling ACS data through the census API key, data on Puerto Rico was extracted. For the variables requested (e.g. average household size, education, etc.) there was no available data on Puerto Rico, hence the missing data pattern observed earlier. These are removed below.
+
+```{r anti_join2, results = 'hide'}
+acs16 <- acs16 %>% 
+  filter(!str_detect(name, "Puerto Rico")) # filter rows where string is present in col name, logical
+                                           # operator ! negates the initial detection 
+sum(duplicated(acs16$fips)) 
+sum(duplicated(incarceration$fips)) # 0 duplicates in both dfs 
+```
+
+From the anti join approach, there was a major discrepancy noticed: the incarceration dataframe aggregates the five borough of New York City into one "New York County," while ACS data measures all five boroughs separately. Due to the size of these boroughs it is important to aggregate them instead of dropping them since doing so will lead to missing out on a valuable data point.
+
+```{r anti_join_boroughs, results = 'hide'}
+boroughs <- acs16 %>% filter(fips %in% c(36005, # Join NY boroughs into one county -- replicate
+                   36047, 36061, 36081, 36085)) # incarceration16
+# Aggregate columns, due to different types of obsv must summarise each group of cols diff
+raw_columns <- c(4:10, 12:14, 16:26) # Raw columns
+median_columns <- c(15, 31)          # Median columns
+perc_avg_columns <- c(3, 11, 27:30)  # Percent average columns 
+
+ny_aggregate <- boroughs %>% # Summarize the data frame
+  summarise(
+    across(all_of(raw_columns), sum),
+    across(all_of(median_columns), median),
+    across(all_of(perc_avg_columns), mean)
+)
+print(ny_aggregate)
+
+#aggregate the sumarised rows into one ny county 
+ny_aggregate <- ny_aggregate %>%
+  mutate(fips = 36061, name = "New York County")
+
+ny_aggregate <- ny_aggregate %>% #reorder columns! 
+  select(fips, name, everything()) %>% 
+  mutate(fips = as.character(fips),
+         name = "New York County")
+
+# remove the 5 boroughs from acs 16
+acs16 <- acs16 %>% filter(!fips %in% c(36005,
+                                             36047, 36061, 36081, 36085))
+
+acs16 <- bind_rows(acs16, ny_aggregate)
+```
+
+```{r fig.margin = TRUE, echo = FALSE, results = 'hide', out.width = "65%"}
+apply(acs16, 2, pmiss)
+
+gg_miss_var(acs16, 
+            show_pct = FALSE) + labs(title = "Missing Value by Variable")
+```
+
+An alternative approach is to use a complete cases function like below. This also retrieves rows with missing values and allows us to see how Peurto Rico observations are driving the presence of Na values.
+
+```{r results = 'hide'}
+narow <- acs16[!complete.cases(acs16),] #acs16 w/ in the df look 4 complete cases in all rows, but negated so it will get the not complete cases (NAs)
+print(narow) 
+```
+
+### Merging both data sets
+
+```{r final_merge, echo = FALSE}
+# MERGE III - success 
+incarceration_acs16 <- left_join(incarceration16, acs16, by = "fips")
+#check NA below 
+gg_miss_var(incarceration_acs16, 
+            show_pct = FALSE) + labs(title = "Missing value by variable of merged dataframe")
+```
+
+```{r final_merge_nacheck, results = 'hide', echo = FALSE}
+naperc <- apply(incarceration_acs16, 2, pmiss) #apply to df, 2 = cols, pmiss function
+print(naperc) #most updated, missing very few values, omit them save the trouble/ time
+
+incarceration_acs16 <- na.omit(incarceration_acs16) #omit very small # of NA, -3 obsv 
+```
+
+```{r results = 'hide'}
+naperc <- apply(incarceration_acs16, 2, pmiss) #apply to df, 2 = cols, pmiss function
+print(naperc) # 0 NA now 
+```
+
+There are very few NA values now that are subsequently dropped
+
+Below, the education variables from the ACS survey are aggregated into a city human capital index (CHCI) using a basic function.
+
+```{r chci_variable}
+chciindex <- function(data_frame) {       #takes a data_frame as input, returns newly calc variable
+  chci <- ((50* data_frame$ed_below9e + 100*data_frame$ed_hsnodip_e + # assigning new variable chci  
+            120*data_frame$ed_hsdip_e + 130* data_frame$ed_scollege_e + 
+            140* data_frame$ed_associate_e + 190*data_frame$ed_bachelor_e + #must specify to look into a df, find these vars
+              230*data_frame$graddeg_higher_e))/ 100    # named variables, hence 'df$variable name'
+  return(chci)
+}
+```
+
+```{r results = 'hide', include = FALSE}
+incarceration_acs16$chci <- chciindex(incarceration_acs16)
+print(colnames(incarceration_acs16)) 
+
+# Remove unnessary cols 
+incarceration_acs16 <- incarceration_acs16 %>% select(-c("year", "name")) 
+incarceration_acs16 <- incarceration_acs16 %>% select(-c(19:25)) # 3136 x40
+```
+
+## Part II: Data Visualization
+
+#### Visualization of incarceration rates by county in the US
+
+```{r usmap_visual, echo = FALSE, warning = FALSE, message = FALSE}
+library(sf)
+cap_value <- 1500  # Adjust this value based on your data distribution
+
+# Apply capping to the data
+incarceration16$capped_jail_pop_rate <- scales::squish(incarceration16$total_jail_pop_rate, range = c(0, cap_value))
+
+# Define the breaks and labels for the color scale
+breaks <- c(100, 300, 500, 700, 900, cap_value)
+labels <- c("100", "300", "500", "700", "900", paste0(">", cap_value))
+
+# Create the map with capped values and defined breaks
+map1 <- plot_usmap(data = incarceration16, values = "capped_jail_pop_rate", regions = "counties")+ 
+  labs(title = "Jail Population Rate per 100,000 in 2016") +
+  scale_fill_viridis_c(
+    name = "Rate",
+    option = "E", 
+    breaks = breaks,
+    labels = labels,
+    na.value = "white"
+  ) +
+  theme(
+    legend.position = "right",
+    plot.title = element_text(size = 10),
+    legend.title = element_text(size = 8)
+  ) 
+
+
+map1 + theme_minimal()
+#pdf("jail_population_rate_2016.pdf", width = 10, height = 7)
+#print(map1)
+#dev.off()
+```
+
+Yellow counties are those with the highest rates of incarceration and demonstrate a staggering picture of the incarceration landscape in the US. In these counties, for every 100,000 people, there are approximately 1,500 people behind bars in some capacity. When it comes to high jail population rates, these areas are disproportionately concentrated in the state of Colorado, Texas, and Kentucky and Louisiana, to name a few. As for prison rates the landscape is noticeably different but still concentrated in large swaths of the South, Southwest, and Southeastern United States.
+
+```{r us_map2, echo = FALSE, warning = FALSE, message = FALSE}
+cap_value2 <- 1500  # Adjust this value based on the data distribution
+# Apply capping to the data
+incarceration16$capped_prison_pop_rate <- scales::squish(incarceration16$total_prison_pop_rate, 
+                                                         range = c(0, cap_value))
+breaks2 <- c(100, 300, 500, 700, 900, cap_value2)
+labels2 <- c("100", "300", "500", "700", "900", paste0(">", cap_value2))
+
+# Create the map with capped values and defined breaks
+map2 <- plot_usmap(data = incarceration16, values = "capped_prison_pop_rate") + 
+  labs(title = "Prison Population Rate per 100,000 in 2016") +
+  scale_fill_viridis_c(
+    name = "Rate",
+    option = "E", #Try: A B C D E F G H
+    breaks = breaks2,
+    labels = labels2,
+    na.value = "white"
+  ) + theme(
+    legend.position = "right",
+    plot.title = element_text(size = 10),
+    legend.title = element_text(size = 8),
+  )
+map2 + theme_minimal()
+#pdf("prison_population_rate_2016.pdf", width = 10, height = 7)
+#print(map2)
+#dev.off()
+```
+
+```{r outliers_function, echo = FALSE, warning = FALSE, message = FALSE}
+rm_outliers_col <- function(column, multiplier = 8) {
+  Q1 <- quantile(column, 0.25, na.rm = TRUE)
+  Q3 <- quantile(column, 0.75, na.rm = TRUE)
+  IQR <- Q3 - Q1
+  lower_bound <- Q1 - multiplier * IQR
+  upper_bound <- Q3 + multiplier * IQR
+  column >= lower_bound & column <= upper_bound
+}
+
+remove_outliers_df <- function(df, multiplier = 8) {
+  # Apply the outlier removal function to each numeric column
+  is_outlier <- df %>%
+    select(where(is.numeric)) %>%
+    mutate(across(everything(), ~ rm_outliers_col(.,multiplier))) %>%
+    rowSums() == ncol(select(df, where(is.numeric)))
+  
+  df[is_outlier, ]
+}
+```
+
+To properly visualize relationships among variables of interest, outliers are removed using a straightforward IQR upper and lower bound method. Approximately 700 observations are removed from the original 3139 observations.
+
+```{r results = 'hide'}
+#data set no outliers!! 
+incacs16 <- remove_outliers_df(incarceration_acs16)
+str(incacs16) # removed 700 outliers 
+```
+
+```{r visualization_jail, echo = FALSE, message = FALSE, warning = FALSE}
+library(gridExtra)
+## ~ Jail
+# Median Rent ~ jail
+p2 <- ggplot(incacs16, aes(x = median_rent_e, y = total_jail_pop_rate)) + geom_point(alpha = 0.75) + theme_minimal() + xlim(900, 1500) + ylim(0, 1200) +
+  geom_smooth(method = "lm") + labs(title = "Median rent vs jail population rate")
+
+# Median house income ~ jail
+p5 <- ggplot(incacs16, aes(x = hh_medincome_e, y = total_jail_pop_rate)) + geom_point(alpha = 0.75) + theme_minimal() +
+  geom_smooth(method = "lm") + labs(title = "Household median income vs jail population rate")
+#Unemployment ~ jail
+p3.5 <- ggplot(incacs16, aes(x = unemploy_rate_e, y = total_jail_pop_rate)) + geom_jitter(alpha = 0.75)  + geom_smooth(method = lm) + labs(title = "Unemployment rate vs jail population rate")
+
+# Chci ~ jail 
+p4 <- ggplot(incacs16, aes(x = chci, y = total_jail_pop_rate)) + geom_point(alpha = 0.75) + xlim(0, 200000) + geom_smooth(method = "lm")
+
+grid.arrange(p2, p5, p3.5, p4)
+```
+
+```{r visualization_prison, echo = FALSE, message = FALSE, warning = FALSE}
+## ~ Prison
+p2.5 <- ggplot(incacs16, aes(x = hh_medincome_e, y = total_prison_pop_rate)) + geom_point(alpha = 0.75) + theme_minimal() +
+  geom_smooth(method = "lm") + labs(title = "Household median income vs prison population rate")
+
+# unemployment ~ total prison pop
+p3 <- ggplot(incacs16, aes(x = unemploy_rate_e, y = total_prison_pop_rate))+ geom_jitter(alpha = 0.75)  + geom_smooth(method = lm) + labs(title = "unemployment vs prison population rate")
+
+p4.5 <- ggplot(incacs16, aes(x = chci, y = total_prison_pop_rate)) + geom_point(alpha = 0.75) + xlim(0, 200000) + geom_smooth(method = "lm")
+
+grid.arrange(p2.5, p3, p4.5, ncol = 2)
+```
+
+We can see above the correlation between common socio-economic indicators, such as median household income, city human capital index, and unemployment rate.
+
+```{r distribution_plots, echo = FALSE, message = FALSE, warning  =FALSE}
+bx1 <- boxplot(incacs16$total_jail_pop_rate, 
+        xlab = "Distribution of U.S. jail rate per 100k", 
+        ylim = c(0,2000))
+bx2 <-boxplot(incacs16$total_prison_pop_rate, xlab ="Distribution of U.S. prison rate per 100k") 
+
+h <- ggplot(incacs16, aes(x=total_jail_pop_rate)) + geom_histogram()+ xlim(0, 2000) + theme_minimal()
+h1 <-  ggplot(incacs16, aes(x=total_prison_pop_rate)) + geom_histogram() + xlim(0,2000) + theme_minimal()
+h2 <- ggplot(incacs16, aes(x=female_jail_pop_rate)) + geom_histogram() + xlim(0, 600) + theme_light()
+h3 <- ggplot(incacs16, aes(x=male_jail_pop_rate)) + geom_histogram() +xlim(0,2000) +theme_minimal()
+grid.arrange(h, h1, h2, h3, ncol = 2)
+```
+
+```{r regression, results = 'hide', echo = FALSE, message = FALSE, warning  =FALSE}
+# not controlling for race
+lm1 <- lm(total_jail_pop_rate ~ unemploy_rate_e + median_rent_e + poverty_singl_mothr_perc_e + ppl_poverty_perc_e + hh_single_mother_e + hh_single_father_e + hh_medincome_e + non_citizen_pop_e + foreign_born_e + chci, data = incacs16)
+#summary(lm1)
+
+# State Fixed Effect model, no race variables 
+lm2 <- lm(total_jail_pop_rate ~ unemploy_rate_e + median_rent_e + poverty_singl_mothr_perc_e + ppl_poverty_perc_e + hh_single_mother_e + hh_single_father_e + hh_medincome_e + non_citizen_pop_e + foreign_born_e + chci + as.factor(state), data = incacs16)
+#summary(lm2)
+
+# No state FE, yes controlling for race  
+lm3 <- lm(total_jail_pop_rate ~ unemploy_rate_e + median_rent_e + poverty_singl_mothr_perc_e + ppl_poverty_perc_e + hh_single_mother_e + hh_single_father_e +hh_married_e + nat_hawaiian_pop_e + black_pop_e + asian_pop_e + amindian_pop_e + hslatino_pop_e + hh_medincome_e + non_citizen_pop_e + foreign_born_e + disable_pop_e + chci, data = incacs16)
+#summary(lm3)
+
+# All variables, State Fixed Effect, Control for race
+lm4<- lm(total_jail_pop_rate ~ unemploy_rate_e + median_rent_e + poverty_singl_mothr_perc_e + ppl_poverty_perc_e + hh_single_mother_e + hh_single_father_e +hh_married_e + nat_hawaiian_pop_e + black_pop_e + asian_pop_e + amindian_pop_e + hslatino_pop_e + hh_medincome_e + non_citizen_pop_e +foreign_born_e + disable_pop_e + chci +as.factor(state), data = incacs16)
+#summary(lm4)
+#plot(lm4)
+```
+
+#### Model I: Multiple regression
+
+Below are the two regression outputs for the socio-economic predictor variables regressed on the dependent variables jail population rate and prison population rate, respectively.
+
+```{r regression_stargazer, results = 'asis', echo = FALSE, message = FALSE, warning  = FALSE,fig.cap="Table 1"}
+stargazer(lm1, lm2, lm3, lm4, type = 'html', 
+          title = "Regression Results",
+          dep.var.labels = "Total Jail Population Rate",
+          covariate.labels = c("Unemployment rate", "Median Rent", "Poverty single mother", "Poverty all people", "Household single mother", "Household single father", "Household married", "Native Hawaiian", "Black", "Asian", "American Indian", "Hispanic", "Household median income", "Non citizen population", "Foreign born", "Disabled population", "CHCI"), 
+          omit = c(20:63), align = TRUE, out = "regression_table2.html")
+
+#webshot2::webshot("regression_table2.html", file = "regression_table2.png")
+```
+
+```{r regression_prison, results = 'hide', echo = FALSE, message = FALSE, warning  =FALSE}
+lmp1 <- lm(total_prison_pop_rate ~ unemploy_rate_e + median_rent_e + poverty_singl_mothr_perc_e + ppl_poverty_perc_e + hh_single_mother_e + hh_single_father_e + hh_medincome_e + non_citizen_pop_e + foreign_born_e + chci, data = incacs16)
+summary(lmp1)
+
+lmp2 <- lm(total_prison_pop_rate ~ unemploy_rate_e + median_rent_e + poverty_singl_mothr_perc_e + ppl_poverty_perc_e + hh_single_mother_e + hh_single_father_e + hh_medincome_e + non_citizen_pop_e + foreign_born_e + chci + as.factor(state), data = incacs16)
+summary(lmp2)
+
+lmp3<- lm(total_prison_pop_rate ~ unemploy_rate_e + median_rent_e + poverty_singl_mothr_perc_e + ppl_poverty_perc_e + hh_single_mother_e + hh_single_father_e +hh_married_e + nat_hawaiian_pop_e + black_pop_e + asian_pop_e + amindian_pop_e + hslatino_pop_e + hh_medincome_e + non_citizen_pop_e +foreign_born_e + disable_pop_e + chci + as.factor(state), data = incacs16)
+summary(lmp3)
+```
+
+```{r regression_stargazer2, results = 'asis', echo = FALSE, message = FALSE, warning=FALSE, fig.cap = "Table 2"}
+stargazer(lmp1, lmp2, lmp3, type = 'html', 
+          title = "Regression Results",
+          dep.var.labels = "Total Prison Population Rate",
+          covariate.labels = c("Unemployment rate", "Median Rent", "Poverty single mother", "Poverty all people", "Household single mother", "Household single father", "Household married", "Native Hawaiian", "Black", "Asian", "American Indian", "Hispanic", "Household median income", "Non citizen population", "Foreign born", "Disable", "CHCI"), omit = c(20:63), align = TRUE, out = "regression_table3prison.html")
+# webshot2::webshot("regression_table3prison.html", file = "regression_table3prison.png")
+```
+
+### Random Forest Model
+
+Upong splitting datsa into training and testing sets, rhe random forest model can now be run on the training data set. Results are below.
+
+```{r rf1, echo = FALSE}
+incrf <- incacs16 %>%  # Note: the RF model is ran w/ out outliers
+  select(-c(1:3, 5, 7:17, 30)) #excluded: fips, state, prison rate, white etc. 
+train_index <- sample(seq_len(nrow(incrf)), size = 0.7 * nrow(incrf))
+train_data <- incrf[train_index, ]
+test_data <- incrf[-train_index, ]
+```
+
+```{r rf2_jail, echo = FALSE}
+#training model 
+rf1 <- randomForest(total_jail_pop_rate ~ ., data = train_data, ntree = 500, importance = TRUE)
+print(rf1)
+plot(rf1, main = "Mean Squared Error of Random Forest Model")
+```
+
+#### Evaluating the Model: Predicting on test data, Mean squared error (MSE), and R Sqaured
+
+```{r rf_evaluating, echo = FALSE}
+# Predicting on the test data
+predictions <- predict(rf1, test_data)
+# Calculate Mean Squared Error (MSE)
+mse <- mean((predictions - test_data$total_jail_pop_rate)^2)
+print(paste("Mean Squared Error:", mse)) 
+# Calculate R-squared
+rss <- sum((predictions - test_data$total_jail_pop_rate)^2)
+tss <- sum((test_data$total_jail_pop_rate - mean(test_data$total_jail_pop_rate))^2)
+rsq <- 1 - rss/tss
+print(paste("R-squared:", rsq))
+
+# TUNING 
+tuned_rf <- randomForest(total_jail_pop_rate ~ ., data = train_data, ntree = 500, mtry = 12)
+print(tuned_rf)
+
+# Predict and evaluate the tuned model
+tuned_predictions <- predict(tuned_rf, test_data)
+tuned_mse <- mean((tuned_predictions - test_data$total_jail_pop_rate)^2)
+print(paste("Tuned Model Mean Squared Error:", tuned_mse))
+```
+
+```{r results = 'hide', include  = FALSE}
+varImpPlot(rf1)
+importance(rf1)
+```
+
+```{r var_importance_mse, echo = FALSE}
+imp <-  importance(rf1)
+
+impdf <- as.data.frame(imp)
+impdf$Variables <- rownames(impdf)
+impdf <- impdf %>%         # simply making impotance into a df, rearranging in descending order
+  arrange(desc(`%IncMSE`)) # backticks here bcus calling variable w/ % on it 
+```
+
+```{r ggvar_importance_mse}
+impmse <- ggplot(impdf, aes(x = reorder(Variables, `%IncMSE`), y = `%IncMSE`)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  coord_flip() +
+  labs(title = "Variable Importance Plot",
+       x = "Variables",
+       y = "% increase in Mean Squared error") +
+  theme_minimal(base_size = 10) +
+  theme(plot.title = element_text(hjust = 0.5, size = 12, face = "bold"),
+        axis.title = element_text(size = 10),
+        axis.text = element_text(size = 8))
+```
+
+```{r ggvar_importance_purity, echo = FALSE}
+
+# Descending order by importance 
+impdf <- impdf %>%
+  arrange(desc(IncNodePurity)) # backticks here bcus calling variable w/ % on it 
+
+imppurity <- ggplot(impdf, aes(x = reorder(Variables, IncNodePurity), y = IncNodePurity)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  coord_flip() +
+  labs(title = "Variable Importance Plot II ",
+       x = "Variables",
+       y = "Increase in Node Purity") +
+  theme_minimal(base_size = 10) +
+  theme(plot.title = element_text(hjust = 0.5, size = 12, face = "bold"),
+        axis.title = element_text(size = 10),
+        axis.text = element_text(size = 8))
+```
+
+```{r gg_display, echo = FALSE}
+grid.arrange(impmse, imppurity, ncol = 2)
+```
+
+Here is a partial importance plot to assess the marginal effect (importance) of a given variable, i.e. the percent of families who fall below the poverty threshold, on jail population rates. From the plot one can see the positive relationship between the two variables, signalling that as the percent of families facing poverty increases, jail population rate similarly increases in the model.
+
+The small ticks on the x axis show the observed distribution of points for the predictor variable. This helps in understanding the range and density of the predictor values.
+
+```{r single_par_plot, echo = FALSE}
+partialPlot(rf1, pred.data = train_data, fam_poverty_perc_e,  #single partial imp plot
+            plot = TRUE, rug = TRUE,
+            main=paste("Partial Dependence of Jail rate on % of families facing poverty"))
+```
+
+```{r echo = FALSE}
+impdf8 <- impdf %>% 
+  arrange(desc(`%IncMSE`)) %>%
+  slice(1:8)
+
+# Extracting variable names, same as above 
+impvar8 <- impdf8$Variables
+
+# Plotting partial dependence plots
+op <- par(mfrow=c(2, 4))
+for (i in seq_along(impvar8)) {
+  partialPlot(rf1, train_data, impvar8[i], xlab=impvar8[i],
+              main=paste("Partial Dependence on", impvar8[i]))
+}
+par(op)
+```
+
+Notes to self
+
+partial dependence - think of the logic: if I adjust/ change this one feature, what is the impact on prediction (how does the prediction change?), everything else constant ("averaged out")
+
+how a feature affects a model's predictions on average, while "averaging out" all other features.

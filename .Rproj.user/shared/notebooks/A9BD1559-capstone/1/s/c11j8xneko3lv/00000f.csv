@@ -1,0 +1,8 @@
+"0","pmiss(acs16)"
+"1","[1]"
+"1"," 4032.258"
+"1","
+"
+"0","### NA Visualization ### "
+"0","gg_miss_var(acs16, "
+"0","            show_pct = TRUE) + labs(title = ""Missing Value by Variable"")"

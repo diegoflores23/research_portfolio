@@ -1,0 +1,3 @@
+"0","# subset for only numeric columns -- for corr plots "
+"0","incarceration_num2 <- incarceration %>%  #subset only numeric variables to make corr plots below"
+"0","  select(-c(1,2,4,5))                   #keep fips in order to merge, left or right join "

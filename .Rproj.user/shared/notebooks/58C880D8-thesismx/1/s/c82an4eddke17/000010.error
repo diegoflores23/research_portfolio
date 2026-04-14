@@ -1,0 +1,1 @@
+{"frames":[{"func":"merge(marginsub2, homicidesub2, by.x = c(\"municipality code\"), \n    by.y = c(\"idunico\"))","file":"","line_number":0,"end_line_number":0,"character_number":0,"end_character_number":0}],"message":"Error: object 'marginsub2' not found\n"}
