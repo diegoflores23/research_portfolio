@@ -184,146 +184,348 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>This project is a lightly modified adaptation of my honors thesis in completion of the BA degree in Political Science at Pitzer College.</p>
+<p>This project contains the code belonging to both an honors thesis and a fulbright garcia robles fellowship while I worked at UNAM, Mexico’s National University. You can read the full paper here.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(foreign)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages("gapminder")</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gapminder)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages("stargazer")</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stargazer)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># importing dataset: homicides </span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>file.list <span class="ot">&lt;-</span> <span class="fu">list.files</span>(<span class="at">pattern=</span> <span class="st">'*.xlsx'</span>)</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>cidehomicide <span class="ot">&lt;-</span> <span class="fu">lapply</span>(file.list, read_excel)</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a> </span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>file.path <span class="ot">&lt;-</span> <span class="st">"~/Users/diegoflores/Documents/RBSI-Working-directory"</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>file.list <span class="ot">&lt;-</span> <span class="fu">list.files</span>(<span class="at">path =</span> file.path, <span class="at">pattern =</span> <span class="st">'*.xlsx'</span>) </span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>file.list <span class="ot">&lt;-</span> <span class="fu">list.files</span>(<span class="at">pattern=</span><span class="st">'*.xlsx'</span>)</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>df.list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(file.list, read_excel)</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>cidehomicide4 <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(df.list, <span class="at">.id =</span> <span class="st">"id"</span>)</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co"># cidehomicide4 is all xlsx files (2006-2011) in one df </span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>cidehomicide2010 <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"A-X10.xlsx"</span>)</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co"># 2010 homicide data for cross section </span></span>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(foreign)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(haven)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stargazer)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(infer)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(xtable)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages(DataExplorer) </span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DataExplorer)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"cheatsheet"</span>)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cheatsheet)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sjPlot)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sjmisc)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sjlabelled)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>marginalization <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"Mexgov - Marginalization index State &amp; muncipio (base).xlsx"</span>)</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>marginalization <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"Marginalization index 06anexo base.csv"</span>)</span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>marginalization <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"Marginalization index 06anexo base.csv"</span>)</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>cidehomicide <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"CIDE homicide data (A-X10).csv"</span>)</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>esochomicide <span class="ot">&lt;-</span> <span class="fu">read_dta</span>(<span class="at">file =</span> <span class="st">"ESOC Mexico.drug.related.murders.dta"</span>)</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="co"># recode new INEGI variable </span></span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="co"># subsetting and merging </span></span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>marginsub2 <span class="ot">&lt;-</span> marginalization[, <span class="fu">c</span>(<span class="st">"state code"</span>, <span class="st">"municipality code"</span>, <span class="st">"municipality"</span>, <span class="st">"total population"</span>, <span class="st">"IM"</span>, <span class="st">"marginalization grade"</span>)] <span class="co">#subset margin data, 6 variables* rm(cidehomicide)</span></span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(marginsub)</span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(margin2)</span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>homicidesub2 <span class="ot">&lt;-</span> homicidesub[,<span class="fu">c</span>(<span class="st">"idunico"</span>, <span class="st">"deaths_total"</span>,<span class="st">"deaths_execution"</span>, <span class="st">"deaths_confront"</span>, <span class="st">"deaths_aggression"</span>)]</span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>homicidesub <span class="ot">&lt;-</span> esochomicide <span class="sc">%&gt;%</span> <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2010</span>) <span class="co"># subset/filter year 2010* </span></span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>mhmerge <span class="ot">&lt;-</span> <span class="fu">merge</span>(marginsub2, homicidesub2, <span class="at">by.x =</span> <span class="fu">c</span>(<span class="st">"municipality code"</span>), <span class="at">by.y =</span> <span class="fu">c</span>(<span class="st">"idunico"</span>)) <span class="co">#merged data by INEGI code* </span></span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(mhmerge<span class="sc">$</span>deaths_total)</span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(mhmerge<span class="sc">$</span>deaths_total)) </span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>mhmerge_rename <span class="ot">&lt;-</span> <span class="fu">rename</span>(mhmerge, <span class="at">municip_code =</span> <span class="st">"municipality code"</span>, <span class="at">state_code =</span> <span class="st">"state code"</span>, <span class="at">marg_grade =</span> <span class="st">"marginalization grade"</span>, <span class="at">margin_index =</span> IM, <span class="at">total_pop =</span> <span class="st">"total population"</span>) </span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="co"># renamed variables, new df</span></span>
-<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>mhmerge <span class="ot">=</span> <span class="fu">subset</span>(mhmerge, <span class="at">select =</span> <span class="sc">-</span><span class="fu">c</span>())</span>
-<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a><span class="co">#possibly subset to remove repeat columns, ignore </span></span>
-<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualization* </span></span>
-<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> mhmerge, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> IM, <span class="at">y =</span> deaths_total))</span>
-<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> p1 <span class="sc">+</span> <span class="fu">geom_point</span>()</span>
-<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> mhmerge, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> IM, <span class="at">y =</span> deaths_total, <span class="at">size =</span> <span class="st">"total population"</span>)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="co"># adding size of dot w total pop*</span></span>
-<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a><span class="co"># Warning message:Using size for a discrete variable is not advised, ignore  </span></span>
-<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> mhmerge_rename, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> margin_index, <span class="at">y =</span> deaths_total, <span class="at">color =</span> <span class="fu">as.integer</span>(state_code))) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Marginalization Index"</span>, <span class="at">y =</span> <span class="st">"Homicides"</span>, <span class="at">title =</span> <span class="st">"Correlation Between Marginalization Levels and Drug War Homicides"</span>) <span class="sc">+</span></span>
-<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">750</span>)</span>
-<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> mhmerge_rename, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> margin_index, <span class="at">y =</span> deaths_total, <span class="at">color =</span> <span class="fu">as.integer</span>(state_code))) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
-<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Marginalization Index"</span>, <span class="at">y =</span> <span class="st">"Homicides"</span>, </span>
-<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Correlation Between Marginalization Levels and Drug War Homicides in 2010"</span>,</span>
-<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Points are recorded homicides"</span>) <span class="sc">+</span> <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">750</span>) </span>
-<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a><span class="co">#log produces various errors: introduced infinite values in continuous x axis</span></span>
-<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a><span class="co"># removed 1258 rows #ignore this</span></span>
-<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>p1</span>
-<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(mhmerge_rename, <span class="st">"/Users/diegoflores/Documents/RBSI-Working-directory/mateo.csv"</span>) </span>
-<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a><span class="co">#sharing data w mateo  </span></span>
-<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> mhmerge_rename,</span>
-<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a>             <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> margin_index, <span class="at">y =</span> homiciderates, <span class="at">color =</span> region)) <span class="sc">+</span>    </span>
-<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a>               <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span>                           </span>
-<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a>               <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Marginalization Index"</span>, </span>
-<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>                    <span class="at">y =</span> <span class="st">"Homicide rate per 100,000"</span>, </span>
-<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a>                    <span class="at">title =</span> <span class="st">"Correlation Between Marginalization Levels and Drug War Homicides"</span>, </span>
-<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a>                    <span class="at">subtitle =</span> <span class="st">"Data points are homicide rates per 100,000 people"</span>,</span>
-<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a>                    <span class="at">caption =</span> <span class="st">"Source: Princeton Empirical Studies of Conflict"</span>) <span class="sc">+</span> </span>
-<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">750</span>)</span>
-<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a>p1</span>
-<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a><span class="co">#this is the plot for mhmerge rename w deaths total not homicide rate per 100k, do this for mhmerge_nj</span></span>
-<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> mhmerge_nj,</span>
-<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a>             <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> margin_index, <span class="at">y =</span> homiciderates, <span class="at">color =</span> region)) <span class="sc">+</span>    </span>
-<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span>                           </span>
-<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Marginalization Index"</span>, </span>
-<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Homicide rate per 100,000"</span>, </span>
-<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Correlation Between Marginalization Levels and Drug War Homicides"</span>, </span>
-<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Data points are homicide rates per 100,000 people"</span>,</span>
-<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">"Source: Princeton Empirical Studies of Conflict"</span>) <span class="sc">+</span> </span>
-<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">750</span>)</span>
-<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a>p1</span>
-<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a><span class="co">#transformations</span></span>
-<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a>mhmerge_rename<span class="sc">$</span>loghom <span class="ot">&lt;-</span> <span class="fu">log</span>(mhmerge_rename<span class="sc">$</span>deaths_total <span class="sc">+</span> <span class="dv">1</span>) <span class="co">#ignore this</span></span>
-<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a>mhmerge_rename<span class="sc">$</span>population <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">gsub</span>(<span class="st">" "</span>, <span class="st">""</span>, mhmerge_rename<span class="sc">$</span>total_pop, <span class="at">fixed =</span> <span class="cn">TRUE</span>)) </span>
-<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a><span class="co"># transform total_pop to  to numeric</span></span>
-<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a>mhmerge_rename<span class="sc">$</span>homiciderates <span class="ot">&lt;-</span> (mhmerge_rename<span class="sc">$</span>deaths_total <span class="sc">/</span> mhmerge_rename<span class="sc">$</span>population) <span class="sc">*</span> <span class="dv">100000</span> </span>
-<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a><span class="co">#creating homiciderates per 100k for rename data</span></span>
-<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a>mhmerge_nj<span class="sc">$</span>population <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">gsub</span>(<span class="st">" "</span>, <span class="st">""</span>, mhmerge_nj<span class="sc">$</span>total_pop, <span class="at">fixed =</span> <span class="cn">TRUE</span>)) </span>
-<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a><span class="co">#nj pop data now has numeric value</span></span>
-<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a>mhmerge_nj<span class="sc">$</span>homiciderates <span class="ot">&lt;-</span> (mhmerge_nj<span class="sc">$</span>deaths_total <span class="sc">/</span> mhmerge_nj<span class="sc">$</span>population) <span class="sc">*</span> <span class="dv">100000</span>  </span>
-<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a><span class="co">#added homiciderates per100k variable to nj</span></span>
-<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a> </span>
-<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a><span class="co"># New variable - region</span></span>
-<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a>region <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">northwest =</span> <span class="fu">c</span>(<span class="dv">02</span>, <span class="dv">03</span>, <span class="dv">18</span>, <span class="dv">25</span>, <span class="dv">26</span>), <span class="at">north =</span> <span class="fu">c</span>(<span class="dv">08</span>, <span class="dv">05</span>, <span class="dv">10</span>, <span class="dv">32</span>, <span class="dv">24</span>), <span class="at">northeast =</span> <span class="fu">c</span>(<span class="dv">19</span>, <span class="dv">28</span>),</span>
-<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a><span class="at">central_west =</span> <span class="fu">c</span>(<span class="dv">06</span>, <span class="dv">11</span>, <span class="dv">14</span>, <span class="dv">16</span>, <span class="dv">01</span>), <span class="at">south_central =</span> <span class="fu">c</span>(<span class="dv">09</span>, <span class="dv">13</span>, <span class="dv">15</span>, <span class="dv">17</span>, <span class="dv">21</span>, <span class="dv">22</span>, <span class="dv">29</span>), <span class="at">gulf =</span> <span class="fu">c</span>(<span class="dv">27</span>, <span class="dv">30</span>), <span class="at">peninsula =</span> <span class="fu">c</span>(<span class="dv">04</span>,<span class="dv">23</span>, <span class="dv">31</span>)) </span>
-<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(egion) </span>
-<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a>mhmerge_rename<span class="sc">$</span>region <span class="ot">&lt;-</span> <span class="st">"southcentral"</span></span>
-<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a>mhmerge_rename<span class="sc">$</span>region[mhmerge_rename<span class="sc">$</span>state_code <span class="sc">==</span> <span class="fu">c</span>(<span class="dv">02</span>, <span class="dv">03</span>, <span class="dv">18</span>, <span class="dv">25</span>, <span class="dv">26</span>)] <span class="ot">&lt;-</span> <span class="st">"northwest"</span></span>
-<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a>mhmerge_rename<span class="sc">$</span>region[mhmerge_rename<span class="sc">$</span>state_code <span class="sc">==</span> <span class="fu">c</span>(<span class="dv">08</span>, <span class="dv">05</span>, <span class="dv">10</span>, <span class="dv">32</span>, <span class="dv">24</span>)] <span class="ot">&lt;-</span><span class="st">"north"</span></span>
-<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a>mhmerge_rename<span class="sc">$</span>region[mhmerge_rename<span class="sc">$</span>state_code <span class="sc">==</span> <span class="fu">c</span>(<span class="dv">19</span>, <span class="dv">28</span>)] <span class="ot">&lt;-</span> <span class="st">"north"</span></span>
-<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a>mhmerge_rename<span class="sc">$</span>region[mhmerge_rename<span class="sc">$</span>state_code <span class="sc">==</span> <span class="fu">c</span>(<span class="dv">01</span>, <span class="dv">06</span>, <span class="dv">11</span>, <span class="dv">14</span>, <span class="dv">16</span>)] <span class="ot">&lt;-</span>  <span class="st">"central_west"</span></span>
-<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a>mhmerge_rename<span class="sc">$</span>region[mhmerge_rename<span class="sc">$</span>state_code <span class="sc">==</span> <span class="fu">c</span>(<span class="dv">27</span>, <span class="dv">30</span>)] <span class="ot">&lt;-</span> <span class="st">"gulf"</span></span>
-<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a>mhmerge_rename<span class="sc">$</span>region[mhmerge_rename<span class="sc">$</span>state_code <span class="sc">==</span> <span class="fu">c</span>(<span class="dv">04</span>,<span class="dv">23</span>, <span class="dv">31</span>)] <span class="ot">&lt;-</span> <span class="st">"peninsula"</span></span>
-<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a><span class="co"># No Juarez </span></span>
-<span id="cb1-123"><a href="#cb1-123" aria-hidden="true" tabindex="-1"></a>mhmerge_nj <span class="ot">&lt;-</span> <span class="fu">subset</span>(mhmerge_rename, municip_code <span class="sc">!=</span> <span class="dv">8037</span>) <span class="co">#no juarez outlier</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(foreign)</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MatchIt)</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(naniar)</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("arsenal")</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(arsenal)</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("vtable")</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(vtable)</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="co">#Marginalization data </span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>marginalization2 <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"data_raw/marg_index_06anexo_base.csv"</span>) <span class="co">#marg by municipality 2010, columns str are not characters</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(marginalization2)   <span class="co">#2463 obs. of  15 variables, variables are all correct type</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(marginalization2)) </span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="co">#Homicide data</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>esochomicide <span class="ot">&lt;-</span> <span class="fu">read_dta</span>(<span class="st">"data_raw/ESOC_Mexico_drug_related_murders.dta"</span>) <span class="co">#all homicide data 2006- 11 </span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>homicidesub <span class="ot">&lt;-</span> esochomicide <span class="sc">%&gt;%</span> </span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2010</span>)    <span class="co">#subset ESOC homicide data for 2010 values</span></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>homicidesub2 <span class="ot">&lt;-</span> homicidesub[,<span class="fu">c</span>(<span class="st">"idunico"</span>, <span class="st">"deaths_total"</span>,</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>                                 <span class="st">"deaths_execution"</span>, <span class="st">"deaths_confront"</span>, <span class="st">"deaths_aggression"</span>)] </span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="co">#sum(is.na(homicidesub2))  </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Regression </span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>model1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(deaths_total <span class="sc">~</span> margin_index <span class="sc">+</span> <span class="fu">as.factor</span>(state_code), <span class="at">data =</span> mhmerge_nj) <span class="co">#regression w total deaths</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>model2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(deaths_execution <span class="sc">~</span> margin_index, <span class="at">data =</span> mhmerge_nj) <span class="co">#regression w deaths from execution</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>model3 <span class="ot">&lt;-</span> <span class="fu">lm</span>(deaths_confront <span class="sc">~</span> margin_index, <span class="at">data =</span> mhmerge_nj) <span class="co">#deaths from confrontation</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>model4 <span class="ot">&lt;-</span> <span class="fu">lm</span>(deaths_aggression <span class="sc">~</span> margin_index, <span class="at">data =</span> mhmerge_nj) <span class="co">#deaths from aggression </span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model1) </span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">stargazer</span>(model1, model2, model3, model4, <span class="at">type =</span> <span class="st">"text"</span>) </span>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Loading control variable data </span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#Primary control variables</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>mex_variables <span class="ot">&lt;-</span> <span class="fu">read_dta</span>(<span class="st">"/Users/diegoflores/Poli_90_intro_2/Prof_Bezares_mex_vars_2010.dta"</span>) <span class="co">#df w controls including:km^2 of municipality, transfers (central to municipio), etc</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">View</span>(mex_variables) </span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str</span>(mex_variables)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>(mex_variables)</span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>model1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(homiciderates <span class="sc">~</span> margin_index <span class="sc">+</span> <span class="fu">as.factor</span>(state_code), <span class="at">data =</span> mhmerge_nj)</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>regressiontable1 <span class="ot">&lt;-</span> <span class="fu">tbl_regression</span>(model1) <span class="fu">print</span>(regressiontable)</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="fu">stargazer</span>(model1, <span class="at">out =</span> <span class="st">"regression1.txt"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>mex_variables_2 <span class="ot">&lt;-</span> <span class="fu">subset</span>(mex_variables, </span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>                          <span class="at">select =</span> <span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">7</span><span class="sc">:</span><span class="dv">11</span>, <span class="dv">15</span><span class="sc">:</span><span class="dv">21</span>, <span class="dv">23</span><span class="sc">:</span><span class="dv">36</span>))  <span class="co">#with out dummy variables </span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">colSums</span>(<span class="fu">is.na</span>(mex_variables_2))                       <span class="co">#checks total number of NA values by column </span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  mex_variables_2[mex_variables_2 <span class="sc">==</span> <span class="dv">0</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span>           <span class="co">#replaces ) with NA values </span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>                                                        <span class="co">#removed dummy variable in above subset in                                                            order to replace 0's with NA</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="co">#check for dummy variables again</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">colSums</span>(<span class="fu">is.na</span>(mex_variables_2)) <span class="co">#make sure that govt transfer value of 0 means NA and not zero transfer.. it probably does so use mex variables 3</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Check for Duplicates </span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>mex_variables_2[<span class="fu">duplicated</span>(mex_variables_2<span class="sc">$</span>muncode),] </span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">duplicated</span>(mex_variables_2<span class="sc">$</span>muncode) <span class="co">#this omits 1463 entries </span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sum</span>(<span class="fu">duplicated</span>(mex_variables_2<span class="sc">$</span>muncode)) <span class="co">#0 duplicates </span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="co">#Most up to date df so far, 10  varibales </span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>mex_variables3 <span class="ot">&lt;-</span> <span class="fu">subset</span>(mex_variables, <span class="at">select =</span> <span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">7</span><span class="sc">:</span><span class="dv">11</span>, <span class="dv">15</span><span class="sc">:</span><span class="dv">21</span>, <span class="dv">23</span><span class="sc">:</span><span class="dv">33</span>))  </span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">colSums</span>(<span class="fu">is.na</span>(mex_variables3))</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>  <span class="co">#13 variables total, includes political party vars</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>  <span class="co">#mex variables3 and marg_homicide_df are principal &amp; most up to date</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="co">#Govt Transfers </span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>mex_variables3<span class="sc">$</span>govt_transfer <span class="ot">&lt;-</span> mex_variables<span class="sc">$</span><span class="st">"aportaciones"</span> <span class="sc">+</span> mex_variables<span class="sc">$</span><span class="st">"participaciones"</span>  <span class="co">#added new column total gov transfer to mex_variable3 da</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>mhmerge <span class="ot">&lt;-</span> <span class="fu">merge</span>(marginsub2, homicidesub2, <span class="at">by.x =</span> <span class="fu">c</span>(<span class="st">"municipality code"</span>), <span class="at">by.y =</span> <span class="fu">c</span>(<span class="st">"idunico"</span>)) <span class="co">#merged data by INEGI code* </span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(mhmerge<span class="sc">$</span>deaths_total)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(mhmerge<span class="sc">$</span>deaths_total)) </span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>mhmerge_rename <span class="ot">&lt;-</span> <span class="fu">rename</span>(mhmerge, <span class="at">municip_code =</span> <span class="st">"municipality code"</span>, <span class="at">state_code =</span> <span class="st">"state code"</span>, <span class="at">marg_grade =</span> <span class="st">"marginalization grade"</span>, <span class="at">margin_index =</span> IM, <span class="at">total_pop =</span> <span class="st">"total population"</span>) </span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># renamed variables, new df</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>marg_homicide_df_rename<span class="sc">$</span>total_govt_transfer <span class="ot">&lt;-</span>mex_variables3<span class="sc">$</span>total_govt_transfer <span class="co">#add govt transfer column from mexvariables3 to this df</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">#Road Access</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>road_access <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"/Users/diegoflores/Poli_90_intro_2/recovered_202203281742/unsaved/coneval_road_access.csv"</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  road_access2 <span class="ot">&lt;-</span> <span class="fu">subset</span>(road_access, </span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>                         <span class="at">select =</span> <span class="sc">-</span><span class="fu">c</span>(clave_entidad, </span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>                                     entidad_federativa, municipio,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>                                     poblacion_2010))</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  road_access3 <span class="ot">&lt;-</span> <span class="fu">rename</span>(road_access2, </span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>                         <span class="at">muncode =</span> clave_municipal, </span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>                         <span class="at">percent_road_access =</span> porc_pob_acce_muy_baja_o_baja)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rm</span>(road_access)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rm</span>(road_access2)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  road_access3[<span class="fu">complete.cases</span>(road_access3), ]                 <span class="co"># Keep only the complete rows, removes last two 2 rows </span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>road_access4 <span class="ot">&lt;-</span> road_access3[<span class="fu">complete.cases</span>(road_access3), ] <span class="co"># Store the complete cases subset in a new data frame</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">colSums</span>(<span class="fu">is.na</span>(road_access4))                                 <span class="co">#0 NA values. Dont replace 0s. 0's mean no percentage has difficulty                                                                  accessing paved roads </span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>marg_homicide_df<span class="sc">$</span>percent_road_access <span class="ot">&lt;-</span> road_access4<span class="sc">$</span>percent_road_access  <span class="co">#add road access to primary dataframe</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rm</span>(road_access4)  </span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="co">#subset: removed repetitive column names to merge both dfs into full df </span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="co"># MARIJUANA SEIZURES </span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>marijuana_seizures <span class="ot">&lt;-</span> <span class="fu">read_dta</span>(<span class="st">"/Users/diegoflores/Poli_90_intro_2/Thesis_data/marihuana_1990_2016.dta"</span>)</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">str</span>(marijuana_seizures)</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summary</span>(marijuana_seizures)</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>  marijuana_seizures_sub <span class="ot">&lt;-</span> marijuana_seizures <span class="sc">%&gt;%</span> <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2010</span>) <span class="co">#filter for year 2010 </span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>  marijuanasub2 <span class="ot">&lt;-</span> <span class="fu">subset</span>(marijuana_seizures_sub, <span class="at">select =</span> <span class="sc">-</span><span class="fu">c</span>(id_state, state, municipio, munseat)) <span class="co">#remove repetitive columns </span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>  marijuanasub2                 <span class="co">#only 3 variables now: year, muncode, and seizures </span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>                                <span class="co">#add mj sub 2 to mex variables3</span></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>mex_variables3<span class="sc">$</span>marijuana_seizures <span class="ot">&lt;-</span> marijuanasub2<span class="sc">$</span>marihuana</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="co"># POP DENSITY </span></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>mex_variables3<span class="sc">$</span>pop_density <span class="ot">&lt;-</span> mex_variables3<span class="sc">$</span><span class="st">"population"</span> <span class="sc">/</span> mex_variables3<span class="sc">$</span><span class="st">"areakm2"</span>  <span class="co">#take total population and divide by municipal measure of square kilometers</span></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a><span class="co">#Create homicide rate variable from deaths total</span></span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>mhmerge_controls2_nj<span class="sc">$</span>homicide_rates10k <span class="ot">&lt;-</span> (mhmerge_controls2_nj<span class="sc">$</span>deaths_total <span class="sc">/</span> mhmerge_controls2_nj<span class="sc">$</span>population) <span class="sc">*</span> <span class="dv">10000</span></span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>mhmerge_controls2_nj<span class="sc">$</span>homicide_rates100k <span class="ot">&lt;-</span> (mhmerge_controls2_nj<span class="sc">$</span>deaths_total <span class="sc">/</span> mhmerge_controls2_nj<span class="sc">$</span>population) <span class="sc">*</span> <span class="dv">100000</span></span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a><span class="co">#IMPORTANT MERGE below #main df is mhmerge_controls2</span></span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>marg_homicide_df_rename <span class="ot">&lt;-</span> <span class="fu">rename</span>(marg_homicide_df, <span class="at">muncode =</span> municip_code) <span class="co">#The issue is here where this df doesnt have homicide_per_100k variable instead has deaths disagregated. MAKE a homicide variable. im completely missing it. issue solved, maindf now has homicide_rates100k variable</span></span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(marg_homicide_df_rename)</span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>mhmerge_controls2 <span class="ot">&lt;-</span> <span class="fu">left_join</span>(marg_homicide_df_rename, mex_variables3, <span class="at">by=</span> <span class="st">'muncode'</span>) <span class="co">#leftjoin merge                                                                                               control to main df  </span></span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a><span class="co"># WITHOUT OUTLIER </span></span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>mhmerge_controls2_nj <span class="ot">&lt;-</span> <span class="fu">subset</span>(mhmerge_controls2, muncode <span class="sc">!=</span> <span class="dv">8037</span>) </span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>(mhmerge_controls2_nj)</span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a><span class="co">#NEW DF delete later</span></span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>  marg_hom_deaths <span class="ot">&lt;-</span> <span class="fu">subset</span>(mhmerge_controls2_nj, </span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>                            <span class="at">select =</span> <span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">9</span><span class="sc">:</span><span class="dv">12</span>, <span class="dv">14</span><span class="sc">:</span><span class="dv">16</span>, <span class="dv">18</span>, <span class="dv">21</span><span class="sc">:</span><span class="dv">23</span>, <span class="dv">25</span><span class="sc">:</span><span class="dv">27</span>, <span class="dv">30</span><span class="sc">:</span><span class="dv">32</span>))</span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(marg_hom_deaths)</span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>  marg_hom_deaths2 <span class="ot">&lt;-</span> marg_hom_deaths <span class="sc">%&gt;%</span> </span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(<span class="fu">desc</span>(homicide_rates100k)) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(muncode) </span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a>marg_hom_deaths2<span class="fl">.1</span> <span class="ot">&lt;-</span> <span class="fu">subset</span>(marg_hom_deaths2, </span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a>                             <span class="at">select =</span> <span class="sc">-</span><span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">10</span><span class="sc">:</span><span class="dv">12</span>))</span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>  marg_hom_deaths3 <span class="ot">&lt;-</span> marg_hom_deaths <span class="sc">%&gt;%</span> </span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(<span class="fu">desc</span>(deaths_total)) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(muncode) </span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a><span class="co">#Log Transformations WITH OUTLIER </span></span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>mhmerge_controls2<span class="sc">$</span>loghomicide <span class="ot">&lt;-</span> <span class="fu">log</span>(mhmerge_controls2<span class="sc">$</span>deaths_total <span class="sc">+</span> <span class="dv">1</span>)</span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a><span class="co">#Homicide Rates transformation w outlier </span></span>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a>mhmerge_controls2<span class="sc">$</span>homicide_rates10k <span class="ot">&lt;-</span> (mhmerge_controls2<span class="sc">$</span>deaths_total <span class="sc">/</span> mhmerge_controls2<span class="sc">$</span>population) <span class="sc">*</span> <span class="dv">10000</span></span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a>mhmerge_controls2<span class="sc">$</span>homicide_rates100k <span class="ot">&lt;-</span> (mhmerge_controls2<span class="sc">$</span>deaths_total <span class="sc">/</span> mhmerge_controls2<span class="sc">$</span>population) <span class="sc">*</span> <span class="dv">100000</span> </span>
+<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a><span class="co"># NO OUTLIER</span></span>
+<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a><span class="co">#Log tranformation of deaths total for NJ</span></span>
+<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a>  mhmerge_controls2_nj<span class="sc">$</span>loghomicide <span class="ot">&lt;-</span> <span class="fu">log</span>(mhmerge_controls2_nj<span class="sc">$</span>deaths_total <span class="sc">+</span> <span class="dv">1</span>)</span>
+<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a><span class="co">#More Log transformations </span></span>
+<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a>mhmerge_controls2_nj<span class="sc">$</span>log_govt_transfer <span class="ot">&lt;-</span> <span class="fu">log</span>(mhmerge_controls2_nj<span class="sc">$</span>total_govt_transfer <span class="sc">+</span> <span class="dv">1</span>)</span>
+<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a>mhmerge_controls2_nj<span class="sc">$</span>logpop_density <span class="ot">&lt;-</span> <span class="fu">log</span>(mhmerge_controls2_nj<span class="sc">$</span>pop_density <span class="sc">+</span> <span class="dv">1</span>) <span class="co">#also attempt to run regression with popn_10k vs pop density </span></span>
+<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a>mhmerge_controls2_nj<span class="sc">$</span>log_percent_road_access <span class="ot">&lt;-</span> <span class="fu">log</span>(mhmerge_controls2_nj<span class="sc">$</span>percent_road_access <span class="sc">+</span> <span class="dv">1</span>)</span>
+<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a>mhmerge_controls2_nj<span class="sc">$</span>log_gdp_usd <span class="ot">&lt;-</span> <span class="fu">log</span>(mhmerge_controls2_nj<span class="sc">$</span>gdp_usd <span class="sc">+</span> <span class="dv">1</span>)</span>
+<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-76"><a href="#cb4-76" aria-hidden="true" tabindex="-1"></a><span class="co"># New variable - region  </span></span>
+<span id="cb4-77"><a href="#cb4-77" aria-hidden="true" tabindex="-1"></a>mhmerge_controls2_nj <span class="ot">&lt;-</span> mhmerge_controls2_nj <span class="sc">%&gt;%</span>  </span>
+<span id="cb4-78"><a href="#cb4-78" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">region =</span> <span class="fu">case_when</span>(state_code <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">6</span>, <span class="dv">11</span>, <span class="dv">14</span>, <span class="dv">16</span>, <span class="dv">18</span>, <span class="dv">22</span>, <span class="dv">24</span>, <span class="dv">32</span>) <span class="sc">~</span> <span class="st">'central_west'</span>,</span>
+<span id="cb4-79"><a href="#cb4-79" aria-hidden="true" tabindex="-1"></a>                            state_code <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">9</span>, <span class="dv">12</span>, <span class="dv">13</span>, <span class="dv">15</span>, <span class="dv">17</span>, <span class="dv">21</span>, <span class="dv">29</span>, <span class="dv">20</span>) <span class="sc">~</span> <span class="st">'central'</span>,</span>
+<span id="cb4-80"><a href="#cb4-80" aria-hidden="true" tabindex="-1"></a>                            state_code <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">8</span>,  <span class="dv">10</span>, <span class="dv">19</span>, <span class="dv">25</span>, <span class="dv">26</span>, <span class="dv">28</span>) <span class="sc">~</span> <span class="st">'north'</span>,</span>
+<span id="cb4-81"><a href="#cb4-81" aria-hidden="true" tabindex="-1"></a>                            state_code <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">7</span>, <span class="dv">23</span>, <span class="dv">27</span>, <span class="dv">30</span>, <span class="dv">31</span>) <span class="sc">~</span> <span class="st">'southeast'</span>))</span>
+<span id="cb4-82"><a href="#cb4-82" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb4-83"><a href="#cb4-83" aria-hidden="true" tabindex="-1"></a><span class="do">## Summary Statistics ## </span></span>
+<span id="cb4-84"><a href="#cb4-84" aria-hidden="true" tabindex="-1"></a>labs <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">ogname =</span> <span class="fu">c</span>(<span class="st">'margin_index'</span>, <span class="st">'deaths_total'</span>, </span>
+<span id="cb4-85"><a href="#cb4-85" aria-hidden="true" tabindex="-1"></a>                              <span class="st">'population'</span>,<span class="st">'homicide_rates100k'</span>, <span class="st">'marijuana_seizures'</span>),</span>
+<span id="cb4-86"><a href="#cb4-86" aria-hidden="true" tabindex="-1"></a>                  <span class="at">newname =</span> <span class="fu">c</span>(<span class="st">'Marginalization Index'</span>,<span class="st">'Total Homicides'</span>,</span>
+<span id="cb4-87"><a href="#cb4-87" aria-hidden="true" tabindex="-1"></a>                              <span class="st">'Population'</span>,<span class="st">'Homicides per 100k'</span>, <span class="st">'Marijuana Seizures'</span>))</span>
+<span id="cb4-88"><a href="#cb4-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-89"><a href="#cb4-89" aria-hidden="true" tabindex="-1"></a><span class="fu">sumtable</span>(mhmerge_controls2_nj, <span class="at">vars =</span> <span class="fu">c</span>(<span class="st">'margin_index'</span>,<span class="st">'deaths_total'</span>, </span>
+<span id="cb4-90"><a href="#cb4-90" aria-hidden="true" tabindex="-1"></a>                                        <span class="st">'population'</span>,<span class="st">'homicide_rates100k'</span>, <span class="st">'marijuana_seizures'</span>), <span class="at">digits =</span> <span class="dv">3</span>, <span class="at">labels=</span>labs, <span class="at">out=</span><span class="st">'htmlreturn'</span>, <span class="at">file =</span><span class="st">'thesis_summarystat'</span>, <span class="at">title =</span> <span class="st">'Table 1'</span>)</span>
+<span id="cb4-91"><a href="#cb4-91" aria-hidden="true" tabindex="-1"></a><span class="fu">getwd</span>()</span>
+<span id="cb4-92"><a href="#cb4-92" aria-hidden="true" tabindex="-1"></a>   summ <span class="ot">=</span> <span class="fu">list</span>(</span>
+<span id="cb4-93"><a href="#cb4-93" aria-hidden="true" tabindex="-1"></a>           <span class="fu">c</span>(<span class="st">'notNA(x)'</span>,<span class="st">'mean(x)'</span>,<span class="st">'min(x)'</span>,<span class="st">'max(x)'</span>))</span>
+<span id="cb4-94"><a href="#cb4-94" aria-hidden="true" tabindex="-1"></a>   </span>
+<span id="cb4-95"><a href="#cb4-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-96"><a href="#cb4-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-97"><a href="#cb4-97" aria-hidden="true" tabindex="-1"></a><span class="do">##Plot 1 </span></span>
+<span id="cb4-98"><a href="#cb4-98" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> mhmerge_controls2_nj) <span class="sc">+</span> </span>
+<span id="cb4-99"><a href="#cb4-99" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> margin_index, <span class="at">y =</span> homicide_rates100k, <span class="at">color =</span> region) <span class="sc">+</span>    </span>
+<span id="cb4-100"><a href="#cb4-100" aria-hidden="true" tabindex="-1"></a>               <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">1.4</span>, <span class="at">alpha =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
+<span id="cb4-101"><a href="#cb4-101" aria-hidden="true" tabindex="-1"></a>               <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Marginalization Index"</span>, </span>
+<span id="cb4-102"><a href="#cb4-102" aria-hidden="true" tabindex="-1"></a>                    <span class="at">y =</span> <span class="st">"Homicide rate per 100,000"</span>,</span>
+<span id="cb4-103"><a href="#cb4-103" aria-hidden="true" tabindex="-1"></a>                    <span class="at">title =</span> <span class="st">"Marginalization Levels and Drug War Homicides"</span>, </span>
+<span id="cb4-104"><a href="#cb4-104" aria-hidden="true" tabindex="-1"></a>                    <span class="at">subtitle =</span> <span class="st">"Data points are homicide rates per 100,000 people"</span>,</span>
+<span id="cb4-105"><a href="#cb4-105" aria-hidden="true" tabindex="-1"></a>                    <span class="at">caption =</span> <span class="st">"Source: Princeton Empirical Studies of Conflict"</span>)</span>
+<span id="cb4-106"><a href="#cb4-106" aria-hidden="true" tabindex="-1"></a>p1 </span>
+<span id="cb4-107"><a href="#cb4-107" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">+</span> <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">715</span>) <span class="co">#Zooming into plot </span></span>
+<span id="cb4-108"><a href="#cb4-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-109"><a href="#cb4-109" aria-hidden="true" tabindex="-1"></a>p1<span class="fl">.2</span> <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> mhmerge_controls2_nj) <span class="sc">+</span> </span>
+<span id="cb4-110"><a href="#cb4-110" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> margin_index, <span class="at">y =</span> deaths_total, <span class="at">color =</span> region) <span class="sc">+</span>    </span>
+<span id="cb4-111"><a href="#cb4-111" aria-hidden="true" tabindex="-1"></a>               <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">1.4</span>, <span class="at">alpha =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
+<span id="cb4-112"><a href="#cb4-112" aria-hidden="true" tabindex="-1"></a>               <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Marginalization Index"</span>, </span>
+<span id="cb4-113"><a href="#cb4-113" aria-hidden="true" tabindex="-1"></a>                    <span class="at">y =</span> <span class="st">"Total Homicides"</span>,</span>
+<span id="cb4-114"><a href="#cb4-114" aria-hidden="true" tabindex="-1"></a>                    <span class="at">title =</span> <span class="st">"Marginalization Levels and Drug War Homicides"</span>, </span>
+<span id="cb4-115"><a href="#cb4-115" aria-hidden="true" tabindex="-1"></a>                    <span class="at">subtitle =</span> <span class="st">"Data points are individual homicides"</span>,</span>
+<span id="cb4-116"><a href="#cb4-116" aria-hidden="true" tabindex="-1"></a>                    <span class="at">caption =</span> <span class="st">"Source: Princeton Empirical Studies of Conflict"</span>)</span>
+<span id="cb4-117"><a href="#cb4-117" aria-hidden="true" tabindex="-1"></a>p1<span class="fl">.2</span></span>
+<span id="cb4-118"><a href="#cb4-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-119"><a href="#cb4-119" aria-hidden="true" tabindex="-1"></a><span class="co">#Running average - 'loess'</span></span>
+<span id="cb4-120"><a href="#cb4-120" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 1 still </span></span>
+<span id="cb4-121"><a href="#cb4-121" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">+</span> <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">715</span>) <span class="sc">+</span></span>
+<span id="cb4-122"><a href="#cb4-122" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"loess"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb4-123"><a href="#cb4-123" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">+</span>  </span>
+<span id="cb4-124"><a href="#cb4-124" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">400</span>) <span class="sc">+</span> <span class="fu">coord_cartesian</span>(<span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">2.2</span>, <span class="fl">3.8</span>)) <span class="sc">+</span> <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"loess"</span>) <span class="sc">+</span> </span>
+<span id="cb4-125"><a href="#cb4-125" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>() <span class="sc">+</span></span>
+<span id="cb4-126"><a href="#cb4-126" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>region) </span>
+<span id="cb4-127"><a href="#cb4-127" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">+</span>  </span>
+<span id="cb4-128"><a href="#cb4-128" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">715</span>) <span class="sc">+</span> <span class="fu">coord_cartesian</span>(<span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">2.2</span>, <span class="fl">3.8</span>)) <span class="sc">+</span> <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"loess"</span>) <span class="sc">+</span> </span>
+<span id="cb4-129"><a href="#cb4-129" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>() <span class="sc">+</span></span>
+<span id="cb4-130"><a href="#cb4-130" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(region<span class="sc">~</span>.)</span>
+<span id="cb4-131"><a href="#cb4-131" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">+</span>  </span>
+<span id="cb4-132"><a href="#cb4-132" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">25</span>) <span class="sc">+</span> <span class="fu">coord_cartesian</span>(<span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">2.2</span>, <span class="fl">3.8</span>)) <span class="sc">+</span>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"loess"</span>) <span class="sc">+</span></span>
+<span id="cb4-133"><a href="#cb4-133" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>() <span class="sc">+</span></span>
+<span id="cb4-134"><a href="#cb4-134" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(.<span class="sc">~</span>region)</span>
+<span id="cb4-135"><a href="#cb4-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-136"><a href="#cb4-136" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("devEMF") # if not installed already</span></span>
+<span id="cb4-137"><a href="#cb4-137" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(devEMF)</span>
+<span id="cb4-138"><a href="#cb4-138" aria-hidden="true" tabindex="-1"></a>tmp_file <span class="ot">&lt;-</span> <span class="st">"EMF_plot.emf"</span></span>
+<span id="cb4-139"><a href="#cb4-139" aria-hidden="true" tabindex="-1"></a><span class="co"># ?emf # if needed</span></span>
+<span id="cb4-140"><a href="#cb4-140" aria-hidden="true" tabindex="-1"></a><span class="fu">emf</span>(<span class="at">file=</span> tmp_file, <span class="at">pointsize=</span> <span class="dv">10</span>, <span class="at">width=</span> <span class="dv">5</span>, <span class="at">height=</span> <span class="dv">3</span>) <span class="co"># Opens a device</span></span>
+<span id="cb4-141"><a href="#cb4-141" aria-hidden="true" tabindex="-1"></a>temp_margins <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">1.5</span>, <span class="fl">2.3</span>, <span class="fl">0.5</span>, <span class="fl">0.2</span>) <span class="co"># Adjust margins</span></span>
+<span id="cb4-142"><a href="#cb4-142" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>), <span class="at">mar =</span> temp_margins,</span>
+<span id="cb4-143"><a href="#cb4-143" aria-hidden="true" tabindex="-1"></a>    <span class="at">mgp=</span><span class="fu">c</span>(<span class="fl">0.6</span>, <span class="fl">0.3</span>, <span class="dv">0</span>),  <span class="at">tcl =</span> <span class="sc">-</span><span class="fl">0.15</span>, <span class="at">las =</span> <span class="dv">1</span>)</span>
+<span id="cb4-144"><a href="#cb4-144" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(p1 <span class="sc">+</span> <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">715</span>) <span class="sc">+</span></span>
+<span id="cb4-145"><a href="#cb4-145" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"loess"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>)) <span class="co"># create your plot</span></span>
+<span id="cb4-146"><a href="#cb4-146" aria-hidden="true" tabindex="-1"></a><span class="fu">grid</span>(<span class="at">col=</span> <span class="st">"grey"</span>)</span>
+<span id="cb4-147"><a href="#cb4-147" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>()  <span class="co"># Close the device</span></span>
+<span id="cb4-148"><a href="#cb4-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-149"><a href="#cb4-149" aria-hidden="true" tabindex="-1"></a><span class="co">#linear </span></span>
+<span id="cb4-150"><a href="#cb4-150" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">+</span>  </span>
+<span id="cb4-151"><a href="#cb4-151" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">600</span>) <span class="sc">+</span> <span class="fu">coord_cartesian</span>(<span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">2.2</span>, <span class="fl">3.8</span>)) <span class="sc">+</span> <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>) <span class="sc">+</span> </span>
+<span id="cb4-152"><a href="#cb4-152" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>region) </span>
+<span id="cb4-153"><a href="#cb4-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-154"><a href="#cb4-154" aria-hidden="true" tabindex="-1"></a><span class="co">#Homicides as a function of distance to US border </span></span>
+<span id="cb4-155"><a href="#cb4-155" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> mhmerge_controls2_nj) <span class="sc">+</span> </span>
+<span id="cb4-156"><a href="#cb4-156" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> dist_us_border, <span class="at">y =</span> homicide_rates100k, <span class="at">color =</span> region) <span class="sc">+</span>    </span>
+<span id="cb4-157"><a href="#cb4-157" aria-hidden="true" tabindex="-1"></a>               <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">1.4</span>, <span class="at">alpha =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
+<span id="cb4-158"><a href="#cb4-158" aria-hidden="true" tabindex="-1"></a>               <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Disatance to US Border"</span>, </span>
+<span id="cb4-159"><a href="#cb4-159" aria-hidden="true" tabindex="-1"></a>                    <span class="at">y =</span> <span class="st">"Homicide rate per 100,000"</span>,</span>
+<span id="cb4-160"><a href="#cb4-160" aria-hidden="true" tabindex="-1"></a>                    <span class="at">title =</span> <span class="st">"Distance to US Border &amp; Drug War Homicides"</span>, </span>
+<span id="cb4-161"><a href="#cb4-161" aria-hidden="true" tabindex="-1"></a>                    <span class="at">subtitle =</span> <span class="st">"Data points are homicide rates per 100,000 people"</span>,</span>
+<span id="cb4-162"><a href="#cb4-162" aria-hidden="true" tabindex="-1"></a>                    <span class="at">caption =</span> <span class="st">"Source: Princeton Empirical Studies of Conflict"</span>) <span class="sc">+</span></span>
+<span id="cb4-163"><a href="#cb4-163" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">715</span>) </span>
+<span id="cb4-164"><a href="#cb4-164" aria-hidden="true" tabindex="-1"></a>p2</span>
+<span id="cb4-165"><a href="#cb4-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-166"><a href="#cb4-166" aria-hidden="true" tabindex="-1"></a><span class="co">#Homicide plotted against govt transfer</span></span>
+<span id="cb4-167"><a href="#cb4-167" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> mhmerge_controls2_nj) <span class="sc">+</span> </span>
+<span id="cb4-168"><a href="#cb4-168" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> log_govt_transfer, <span class="at">y =</span> homicide_rates100k, <span class="at">color =</span> region) <span class="sc">+</span>    </span>
+<span id="cb4-169"><a href="#cb4-169" aria-hidden="true" tabindex="-1"></a>               <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">1.4</span>, <span class="at">alpha =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
+<span id="cb4-170"><a href="#cb4-170" aria-hidden="true" tabindex="-1"></a>               <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Log Government Transfers"</span>, </span>
+<span id="cb4-171"><a href="#cb4-171" aria-hidden="true" tabindex="-1"></a>                    <span class="at">y =</span> <span class="st">"Homicide rate per 100,000"</span>,</span>
+<span id="cb4-172"><a href="#cb4-172" aria-hidden="true" tabindex="-1"></a>                    <span class="at">title =</span> <span class="st">"Government tranfers &amp; Drug War Homicides"</span>, </span>
+<span id="cb4-173"><a href="#cb4-173" aria-hidden="true" tabindex="-1"></a>                    <span class="at">subtitle =</span> <span class="st">"Data points are homicide rates per 100,000 people"</span>,</span>
+<span id="cb4-174"><a href="#cb4-174" aria-hidden="true" tabindex="-1"></a>                    <span class="at">caption =</span> <span class="st">"Source: Princeton Empirical Studies of Conflict"</span>) <span class="sc">+</span></span>
+<span id="cb4-175"><a href="#cb4-175" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">715</span>) </span>
+<span id="cb4-176"><a href="#cb4-176" aria-hidden="true" tabindex="-1"></a>p3</span>
+<span id="cb4-177"><a href="#cb4-177" aria-hidden="true" tabindex="-1"></a><span class="co">#homicide plotted against population</span></span>
+<span id="cb4-178"><a href="#cb4-178" aria-hidden="true" tabindex="-1"></a>p4 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> mhmerge_controls2_nj) <span class="sc">+</span> </span>
+<span id="cb4-179"><a href="#cb4-179" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> popn_10k, <span class="at">y =</span> homicide_rates100k, <span class="at">color =</span> region) <span class="sc">+</span>    </span>
+<span id="cb4-180"><a href="#cb4-180" aria-hidden="true" tabindex="-1"></a>               <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">1.4</span>, <span class="at">alpha =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
+<span id="cb4-181"><a href="#cb4-181" aria-hidden="true" tabindex="-1"></a>               <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Population per 10,000"</span>, </span>
+<span id="cb4-182"><a href="#cb4-182" aria-hidden="true" tabindex="-1"></a>                    <span class="at">y =</span> <span class="st">"Homicide rate per 100,000"</span>,</span>
+<span id="cb4-183"><a href="#cb4-183" aria-hidden="true" tabindex="-1"></a>                    <span class="at">title =</span> <span class="st">"Population per 10,000  &amp; Drug War Homicides"</span>, </span>
+<span id="cb4-184"><a href="#cb4-184" aria-hidden="true" tabindex="-1"></a>                    <span class="at">subtitle =</span> <span class="st">"Data points are homicide rates per 100,000 people"</span>,</span>
+<span id="cb4-185"><a href="#cb4-185" aria-hidden="true" tabindex="-1"></a>                    <span class="at">caption =</span> <span class="st">"Source: Princeton Empirical Studies of Conflict"</span>) <span class="sc">+</span></span>
+<span id="cb4-186"><a href="#cb4-186" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">300</span>) <span class="sc">+</span> <span class="fu">xlim</span>(<span class="dv">0</span>,<span class="dv">25</span>)</span>
+<span id="cb4-187"><a href="#cb4-187" aria-hidden="true" tabindex="-1"></a>p4</span>
+<span id="cb4-188"><a href="#cb4-188" aria-hidden="true" tabindex="-1"></a><span class="co"># Homicides and GDP </span></span>
+<span id="cb4-189"><a href="#cb4-189" aria-hidden="true" tabindex="-1"></a>p5 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> mhmerge_controls2_nj) <span class="sc">+</span> </span>
+<span id="cb4-190"><a href="#cb4-190" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> gdp_usd, <span class="at">y =</span> homicide_rates100k, <span class="at">color =</span> region) <span class="sc">+</span>    </span>
+<span id="cb4-191"><a href="#cb4-191" aria-hidden="true" tabindex="-1"></a>               <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">1.4</span>, <span class="at">alpha =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
+<span id="cb4-192"><a href="#cb4-192" aria-hidden="true" tabindex="-1"></a>               <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"GDP (USD)"</span>, </span>
+<span id="cb4-193"><a href="#cb4-193" aria-hidden="true" tabindex="-1"></a>                    <span class="at">y =</span> <span class="st">"Homicide rate per 100,000"</span>,</span>
+<span id="cb4-194"><a href="#cb4-194" aria-hidden="true" tabindex="-1"></a>                    <span class="at">title =</span> <span class="st">"Municipal GDP &amp; Drug War Homicides"</span>, </span>
+<span id="cb4-195"><a href="#cb4-195" aria-hidden="true" tabindex="-1"></a>                    <span class="at">subtitle =</span> <span class="st">"Data points are homicide rates per 100,000 people"</span>,</span>
+<span id="cb4-196"><a href="#cb4-196" aria-hidden="true" tabindex="-1"></a>                    <span class="at">caption =</span> <span class="st">"Source: Princeton Empirical Studies of Conflict"</span>) <span class="sc">+</span></span>
+<span id="cb4-197"><a href="#cb4-197" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">250</span>) <span class="sc">+</span> <span class="fu">xlim</span>(<span class="dv">22000</span>,<span class="dv">0</span>) <span class="sc">+</span></span>
+<span id="cb4-198"><a href="#cb4-198" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">21500</span>,<span class="dv">950</span>))</span>
+<span id="cb4-199"><a href="#cb4-199" aria-hidden="true" tabindex="-1"></a>p5</span>
+<span id="cb4-200"><a href="#cb4-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-201"><a href="#cb4-201" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-202"><a href="#cb4-202" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stargazer)</span>
+<span id="cb4-203"><a href="#cb4-203" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sjPlot)</span>
+<span id="cb4-204"><a href="#cb4-204" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sjmisc)</span>
+<span id="cb4-205"><a href="#cb4-205" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sjlabelled)</span>
+<span id="cb4-206"><a href="#cb4-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-207"><a href="#cb4-207" aria-hidden="true" tabindex="-1"></a><span class="co"># W/ deaths total &amp; outlier </span></span>
+<span id="cb4-208"><a href="#cb4-208" aria-hidden="true" tabindex="-1"></a>model_outlier <span class="ot">&lt;-</span> <span class="fu">lm</span>(deaths_total <span class="sc">~</span> margin_index, <span class="at">data  =</span> marg_homicide_df)</span>
+<span id="cb4-209"><a href="#cb4-209" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model_outlier)</span>
+<span id="cb4-210"><a href="#cb4-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-211"><a href="#cb4-211" aria-hidden="true" tabindex="-1"></a><span class="co"># W/ homicide rate &amp; outlier </span></span>
+<span id="cb4-212"><a href="#cb4-212" aria-hidden="true" tabindex="-1"></a>model_outlier2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(homicide_rates100k <span class="sc">~</span> margin_index, <span class="at">data =</span> mhmerge_controls2)</span>
+<span id="cb4-213"><a href="#cb4-213" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model_outlier2)</span>
+<span id="cb4-214"><a href="#cb4-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-215"><a href="#cb4-215" aria-hidden="true" tabindex="-1"></a><span class="co">#Base model - no outlier, no fixed effect</span></span>
+<span id="cb4-216"><a href="#cb4-216" aria-hidden="true" tabindex="-1"></a>model1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(homicide_rates100k <span class="sc">~</span> margin_index , <span class="at">data =</span> mhmerge_controls2_nj)</span>
+<span id="cb4-217"><a href="#cb4-217" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model1)</span>
+<span id="cb4-218"><a href="#cb4-218" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(model1)</span>
+<span id="cb4-219"><a href="#cb4-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-220"><a href="#cb4-220" aria-hidden="true" tabindex="-1"></a><span class="co">#hist(resid(model1))</span></span>
+<span id="cb4-221"><a href="#cb4-221" aria-hidden="true" tabindex="-1"></a><span class="co">#qqnorm(resid(model1)) </span></span>
+<span id="cb4-222"><a href="#cb4-222" aria-hidden="true" tabindex="-1"></a><span class="co">#qqline(resid(model1))</span></span>
+<span id="cb4-223"><a href="#cb4-223" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating table</span></span>
+<span id="cb4-224"><a href="#cb4-224" aria-hidden="true" tabindex="-1"></a><span class="co">#stargazer(basemodel1) # disable stargazer messages in header - isnt working </span></span>
+<span id="cb4-225"><a href="#cb4-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-226"><a href="#cb4-226" aria-hidden="true" tabindex="-1"></a><span class="co">#BASE model - simple regression, no outlier, fixed effect</span></span>
+<span id="cb4-227"><a href="#cb4-227" aria-hidden="true" tabindex="-1"></a>model2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(homicide_rates100k <span class="sc">~</span> margin_index <span class="sc">+</span> <span class="fu">as.factor</span>(state_code), <span class="at">data =</span> mhmerge_controls2_nj)</span>
+<span id="cb4-228"><a href="#cb4-228" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model2)</span>
+<span id="cb4-229"><a href="#cb4-229" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(model2)</span>
+<span id="cb4-230"><a href="#cb4-230" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-231"><a href="#cb4-231" aria-hidden="true" tabindex="-1"></a><span class="co"># Multiple regression - no outlier</span></span>
+<span id="cb4-232"><a href="#cb4-232" aria-hidden="true" tabindex="-1"></a>         </span>
+<span id="cb4-233"><a href="#cb4-233" aria-hidden="true" tabindex="-1"></a>model3 <span class="ot">&lt;-</span> <span class="fu">lm</span>(homicide_rates100k <span class="sc">~</span> margin_index <span class="sc">+</span> log_govt_transfer <span class="sc">+</span> popn_10k <span class="sc">+</span> log_percent_road_access <span class="sc">+</span> log_gdp_usd <span class="sc">+</span> <span class="fu">as.factor</span>(state_code), <span class="at">data =</span> mhmerge_controls2_nj)</span>
+<span id="cb4-234"><a href="#cb4-234" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model3)</span>
+<span id="cb4-235"><a href="#cb4-235" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(model3)</span>
+<span id="cb4-236"><a href="#cb4-236" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-237"><a href="#cb4-237" aria-hidden="true" tabindex="-1"></a>model4  <span class="ot">&lt;-</span>  <span class="fu">lm</span>(homicide_rates100k <span class="sc">~</span> margin_index <span class="sc">+</span> log_govt_transfer <span class="sc">+</span> popn_10k <span class="sc">+</span> log_percent_road_access <span class="sc">+</span> log_gdp_usd <span class="sc">+</span> marijuana_seizures <span class="sc">+</span> same_all <span class="sc">+</span> same_state_mun <span class="sc">+</span> same_mun_exec <span class="sc">+</span> <span class="fu">as.factor</span>(state_code), <span class="at">data =</span> mhmerge_controls2_nj)</span>
+<span id="cb4-238"><a href="#cb4-238" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model4)</span>
+<span id="cb4-239"><a href="#cb4-239" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(model4)</span>
+<span id="cb4-240"><a href="#cb4-240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-241"><a href="#cb4-241" aria-hidden="true" tabindex="-1"></a>model5  <span class="ot">&lt;-</span>  <span class="fu">lm</span>(homicide_rates100k <span class="sc">~</span> margin_index <span class="sc">+</span>log_govt_transfer <span class="sc">+</span> popn_10k <span class="sc">+</span> log_percent_road_access <span class="sc">+</span> log_gdp_usd <span class="sc">+</span> marijuana_seizures <span class="sc">+</span> same_all <span class="sc">+</span> same_state_mun <span class="sc">+</span> same_mun_exec, <span class="at">data =</span> mhmerge_controls2_nj)</span>
+<span id="cb4-242"><a href="#cb4-242" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model5) <span class="co">#multiple regression, no state FE </span></span>
+<span id="cb4-243"><a href="#cb4-243" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(model5)</span>
+<span id="cb4-244"><a href="#cb4-244" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-245"><a href="#cb4-245" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-246"><a href="#cb4-246" aria-hidden="true" tabindex="-1"></a><span class="fu">stargazer</span>(model1, model2, model3, model4, model5, <span class="at">type =</span> <span class="st">'text'</span>)</span>
+<span id="cb4-247"><a href="#cb4-247" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-248"><a href="#cb4-248" aria-hidden="true" tabindex="-1"></a><span class="co">#Using Sjplot </span></span>
+<span id="cb4-249"><a href="#cb4-249" aria-hidden="true" tabindex="-1"></a><span class="fu">tab_model</span>(model1, model2, model3, model4, model5) </span>
+<span id="cb4-250"><a href="#cb4-250" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-251"><a href="#cb4-251" aria-hidden="true" tabindex="-1"></a><span class="co"># regression output in html with output saved to file, good for word</span></span>
+<span id="cb4-252"><a href="#cb4-252" aria-hidden="true" tabindex="-1"></a><span class="fu">stargazer</span>(model1, model2, model3, model4, model5, <span class="at">type =</span> <span class="st">'html'</span>, <span class="at">out =</span> <span class="st">'my_regression_table.html'</span>)</span>
+<span id="cb4-253"><a href="#cb4-253" aria-hidden="true" tabindex="-1"></a><span class="fu">stargazer</span>(attitude)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
 
@@ -421,7 +623,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp('/' + window.location.host + '/');
+      var filterRegex = new RegExp("https:\/\/diegoflores23\.github\.io\/research_portfolio\/");
     var isInternal = (href) => {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }
