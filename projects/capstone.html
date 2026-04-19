@@ -158,6 +158,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
       </div> <!-- /container-fluid -->
     </nav>
+  <div id="quarto-announcement" data-announcement-id="b310472b19e3939d01049a10009296e8" class="alert alert-primary hidden"><i class="bi bi-info-circle quarto-announcement-icon"></i><div class="quarto-announcement-content">
+<p>Site currently under construction</p>
+</div><i class="bi bi-x-lg quarto-announcement-action"></i></div>
 </header>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
@@ -168,16 +171,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a>
-  <ul class="collapse">
-  <li><a href="#data-sources" id="toc-data-sources" class="nav-link" data-scroll-target="#data-sources">Data Sources</a></li>
+  <li><a href="#data-sources" id="toc-data-sources" class="nav-link active" data-scroll-target="#data-sources">Data Sources</a></li>
   <li><a href="#loading-data" id="toc-loading-data" class="nav-link" data-scroll-target="#loading-data">Loading Data</a></li>
   <li><a href="#dealing-with-missing-values" id="toc-dealing-with-missing-values" class="nav-link" data-scroll-target="#dealing-with-missing-values">Dealing with missing values</a></li>
-  <li><a href="#multiple-imputation-using-mice" id="toc-multiple-imputation-using-mice" class="nav-link" data-scroll-target="#multiple-imputation-using-mice">Multiple Imputation using MICE</a></li>
+  <li><a href="#multiple-imputation-for-missing-data-using-mice" id="toc-multiple-imputation-for-missing-data-using-mice" class="nav-link" data-scroll-target="#multiple-imputation-for-missing-data-using-mice">Multiple Imputation for missing data using MICE</a></li>
   <li><a href="#loading-wrangling-acs-data" id="toc-loading-wrangling-acs-data" class="nav-link" data-scroll-target="#loading-wrangling-acs-data">Loading &amp; Wrangling ACS Data</a></li>
   <li><a href="#merging-both-data-sets" id="toc-merging-both-data-sets" class="nav-link" data-scroll-target="#merging-both-data-sets">Merging both data sets</a></li>
-  </ul></li>
-  <li><a href="#part-ii-data-visualization" id="toc-part-ii-data-visualization" class="nav-link" data-scroll-target="#part-ii-data-visualization">Part II: Data Visualization</a>
+  <li><a href="#visualizing-jail-and-prison-population-rates-in-the-u.s.-by-county" id="toc-visualizing-jail-and-prison-population-rates-in-the-u.s.-by-county" class="nav-link" data-scroll-target="#visualizing-jail-and-prison-population-rates-in-the-u.s.-by-county">Visualizing jail and prison population rates in the U.S. by county</a></li>
+  <li><a href="#experimenting-with-non-linear-models-and-predictive-analyses" id="toc-experimenting-with-non-linear-models-and-predictive-analyses" class="nav-link" data-scroll-target="#experimenting-with-non-linear-models-and-predictive-analyses">Experimenting with non-linear models and predictive analyses</a>
   <ul class="collapse">
   <li><a href="#random-forest-model" id="toc-random-forest-model" class="nav-link" data-scroll-target="#random-forest-model">Random Forest Model</a></li>
   </ul></li>
@@ -218,22 +219,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="introduction" class="level2">
-<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
 <p>This study is a look at the relationship between common household, socio-economic indicators and rates of incarceration at the county level in the United States in 2016. Specifically, this study seeks to answer these questions:</p>
 <blockquote class="blockquote">
 <p>Why do some counties have higher incarceration rates? What socio-economic indicators predict higher incarceration rates?</p>
 </blockquote>
-<p>With this question in mind, it’s important to define incarceration rates. This study specifically defines incarceration rates as the total jail population rates and total prison population rates in the US in 2016 at the county level. In this study, incarceration as the sum of both jail and prison rates is not the main dependent variable because I assume the possibility of difference in outcomes between jail and prison rates. Specifically, certain predictors may be more important in predicting prison or jail rates due to nuanced differences between the two institutions.</p>
+<p>With this question in mind, incarceration rates are defined as the total jail population rates and total prison population rates in the US in 2016 at the county level. In this study, incarceration is not defined as the sum of jail and prison rates instead they are treated as two separate dependent variables. This is done because of the possibility of difference in outcomes and relationships between jail and prison rates and the independent variables. Specifically, certain predictors may be more important in predicting prison or jail rates due to significant differences between the two institutions.</p>
 <section id="data-sources" class="level3">
 <h3 class="anchored" data-anchor-id="data-sources">Data Sources</h3>
-<p>Vera Incarceration Trends database &amp; American Community Survey (ACS). Both of these data sets are publicaly available see links here: <a href="https://github.com/vera-institute/incarceration-trends">link</a> &amp; <a href="https://www.census.gov/acs/www/data/data-tables-and-tools/data-profiles/2016/">link</a></p>
+<p>Vera Incarceration Trends database &amp; American Community Survey (ACS). Both of these data sets are publicly available see links here: <a href="https://github.com/vera-institute/incarceration-trends">link</a> &amp; <a href="https://www.census.gov/acs/www/data/data-tables-and-tools/data-profiles/2016/">link</a></p>
 </section>
 <section id="loading-data" class="level3">
 <h3 class="anchored" data-anchor-id="loading-data">Loading Data</h3>
 <div class="cell">
+<details class="code-fold">
+<summary>Click to show code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>inc_sub <span class="sc">%&gt;%</span> <span class="fu">kbl</span>(<span class="at">caption =</span> <span class="st">"Incarceration dataframe preview"</span>) <span class="sc">%&gt;%</span> <span class="co"># Print table</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_classic</span>(<span class="at">full_width =</span> F, <span class="at">html_font =</span> <span class="st">"Cambria"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <table class="lightable-classic caption-top table table-sm table-striped small" data-quarto-postprocess="true">
 <caption>Incarceration dataframe preview</caption>
@@ -612,6 +614,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>Variables with more than 30% of missing values are dropped using the code below. It is not a great idea to impute on high NA variables because of the lack of reliability in imputing reliable data, since there is so little pre-existing data to base the imputation on.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Click to show code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># basic function to show % of NA values per variable </span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>pmiss <span class="ot">&lt;-</span> <span class="cf">function</span>(x){ <span class="fu">sum</span>(<span class="fu">is.na</span>(x))<span class="sc">/</span><span class="fu">length</span>(x)<span class="sc">*</span><span class="dv">100</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  }</span>
@@ -625,12 +629,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>incarceration <span class="ot">&lt;-</span> incarceration[, <span class="sc">!</span>(<span class="fu">names</span>(incarceration) <span class="co">#only the cols not(!) listed in cols_to_rm kept</span></span>
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>                                                  <span class="sc">%in%</span> cols_to_rm)] <span class="co">#18 variables now</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
-<section id="multiple-imputation-using-mice" class="level3">
-<h3 class="anchored" data-anchor-id="multiple-imputation-using-mice">Multiple Imputation using MICE</h3>
-<p>Now that high Na columns are removed, our missing data is imputed using a straightforward multiple imputation.</p>
+<section id="multiple-imputation-for-missing-data-using-mice" class="level3">
+<h3 class="anchored" data-anchor-id="multiple-imputation-for-missing-data-using-mice">Multiple Imputation for missing data using MICE</h3>
+<p>Now that columns with high N/A values are removed, the missing data is imputed using a straightforward multiple imputation. After imputing, the data is checked for missing values.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Click to show code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="do">####MICE####</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>predictor_matrix <span class="ot">&lt;-</span> mice<span class="sc">::</span><span class="fu">make.predictorMatrix</span>(incarceration_num2)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -644,15 +651,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>incarceration_mice <span class="ot">&lt;-</span> <span class="fu">mice</span>(incarceration_num2,<span class="at">m=</span><span class="dv">5</span>, <span class="co">#m=5, number of imputations</span></span>
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>                           <span class="at">meth=</span><span class="st">'pmm'</span>, <span class="at">print =</span> <span class="cn">FALSE</span>)  <span class="co">#method pmm</span></span>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(incarceration_mice)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>incarceration_complete <span class="ot">&lt;-</span> <span class="fu">complete</span>(incarceration_mice, <span class="dv">1</span>) <span class="co"># this is completing the data using incarceration_num2 and completing it w mice df (mice df is inc_num but imputed) </span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">pmiss</span>(incarceration_complete) <span class="co">#0 NA's</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0</code></pre>
-</div>
-</div>
-<p>We can observe now the percent of missing values is 0.</p>
 <section id="imputation-diagnostic-checks" class="level4">
 <h4 class="anchored" data-anchor-id="imputation-diagnostic-checks">Imputation diagnostic checks</h4>
 <div class="cell">
@@ -665,10 +665,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">densityplot</span>(incarceration_mice,     <span class="co"># dist. lines are similar, meaning imputed data are consistent among </span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                  <span class="sc">~</span>total_jail_pop_rate, <span class="co"># observed and imputed data </span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">5000</span>), </span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">main =</span> <span class="st">"Imputed distribution (red) against original distribution (blue)"</span>)   </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details class="code-fold">
+<summary>Click to show code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">densityplot</span>(incarceration_mice,     <span class="co"># dist. lines are similar, meaning imputed data are consistent among </span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>                  <span class="sc">~</span>total_jail_pop_rate, <span class="co"># observed and imputed data </span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">5000</span>), </span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">main =</span> <span class="st">"Imputed distribution (red) against original distribution (blue)"</span>)   </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -682,15 +685,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="loading-wrangling-acs-data" class="level3">
 <h3 class="anchored" data-anchor-id="loading-wrangling-acs-data">Loading &amp; Wrangling ACS Data</h3>
-<div class="cell">
-<div class="cell-output cell-output-stderr">
-<pre><code>Getting data from the 2012-2016 5-year ACS</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Using the ACS Data Profile
-Using the ACS Data Profile</code></pre>
-</div>
-</div>
 <p>There is approximately 8676 NA values in the untouched ACS dataset, about half of which are Margin of error estimate values. For the sake of simplicity, these values are removed but remain an important source for statistical testing if needed.</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
@@ -699,18 +693,21 @@ Using the ACS Data Profile</code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="capstone_files/figure-html/acs_wrangling-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="capstone_files/figure-html/acs_wrangling-1.png" class="img-fluid figure-img" style="width:65.0%"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>After removing margin of error values approximately 2.4% of data is missing in numerous variables, suggesting the values are missing not at random (MNAR), that is, the Na values observe a pattern. This is further visualized by the black strip of missing data in the figure below</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">vis_miss</span>(acs16, <span class="at">sort_miss =</span>  <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details class="code-fold">
+<summary>Click to show code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">vis_miss</span>(acs16, <span class="at">sort_miss =</span>  <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="capstone_files/figure-html/acs_na_visual-1.png" class="img-fluid figure-img" style="width:75.0%"></p>
+<p><img src="capstone_files/figure-html/acs_na_visual-1.png" class="img-fluid figure-img" style="width:65.0%"></p>
 </figure>
 </div>
 </div>
@@ -718,55 +715,64 @@ Using the ACS Data Profile</code></pre>
 <p>At this point the incarceration data set has zero NA’s but ACS data observes a structured NA pattern. What exactly are these NA’s? To deal with this I took an anti_join approach (by FIPS) to see what counties from the ACS data don’t have a corresponding value in the incarceration trends data set.</p>
 <p>Before the anti_join, the FIPS columns in the incarceration data frame must be standardized to 5 digits since some values only have 4 FIPS digits. To solve this, a leading zero was added to the 4 digit FIPS columns using an ifelse logical within the mutate function.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>incarceration16 <span class="ot">&lt;-</span> incarceration16 <span class="sc">%&gt;%</span>   <span class="co"># Add leading zero to FIPS w only 4 numbers for consistent </span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fips =</span> <span class="fu">ifelse</span>(<span class="fu">nchar</span>(fips) <span class="sc">==</span> <span class="dv">4</span>, <span class="co"># FIPS id across both dataframes  </span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                       <span class="fu">paste0</span>(<span class="st">"0"</span>, fips), fips)) <span class="co">#if # of chr == 4 paste 0 to fips, else leave fips</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>acs16 <span class="ot">&lt;-</span> acs16 <span class="sc">%&gt;%</span> </span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a> <span class="fu">rename</span>(<span class="at">fips =</span> geoid)  <span class="co">#rename ACS geoid column to fips  </span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Asses which values do not match among both dfs</span></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>incarceration_acs_temp <span class="ot">&lt;-</span> <span class="fu">anti_join</span>(acs16, </span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>                                    incarceration16, <span class="at">by =</span> <span class="st">"fips"</span>) <span class="co"># 82 rows do not match </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details class="code-fold">
+<summary>Click to show code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>incarceration16 <span class="ot">&lt;-</span> incarceration16 <span class="sc">%&gt;%</span>   <span class="co"># Add leading zero to FIPS w only 4 numbers for consistent </span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fips =</span> <span class="fu">ifelse</span>(<span class="fu">nchar</span>(fips) <span class="sc">==</span> <span class="dv">4</span>, <span class="co"># FIPS id across both dataframes  </span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>                       <span class="fu">paste0</span>(<span class="st">"0"</span>, fips), fips)) <span class="co">#if # of chr == 4 paste 0 to fips, else leave fips</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>acs16 <span class="ot">&lt;-</span> acs16 <span class="sc">%&gt;%</span> </span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a> <span class="fu">rename</span>(<span class="at">fips =</span> geoid)  <span class="co">#rename ACS geoid column to fips  </span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Asses which values do not match among both dfs</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>incarceration_acs_temp <span class="ot">&lt;-</span> <span class="fu">anti_join</span>(acs16, </span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>                                    incarceration16, <span class="at">by =</span> <span class="st">"fips"</span>) <span class="co"># 82 rows do not match </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>As mentioned, creating an anti join data frame allows one to see the columns without a corresponding FIPS id in the incarceration dataframe. By doing so it was evident that when calling ACS data through the census API key, data on Puerto Rico was extracted. For the variables requested (e.g.&nbsp;average household size, education, etc.) there was no available data on Puerto Rico, hence the missing data pattern observed earlier. These are removed below.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>acs16 <span class="ot">&lt;-</span> acs16 <span class="sc">%&gt;%</span> </span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">str_detect</span>(name, <span class="st">"Puerto Rico"</span>)) <span class="co"># filter rows where string is present in col name, logical</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>                                           <span class="co"># operator ! negates the initial detection </span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">duplicated</span>(acs16<span class="sc">$</span>fips)) </span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">duplicated</span>(incarceration<span class="sc">$</span>fips)) <span class="co"># 0 duplicates in both dfs </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details class="code-fold">
+<summary>Click to show code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>acs16 <span class="ot">&lt;-</span> acs16 <span class="sc">%&gt;%</span> </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">str_detect</span>(name, <span class="st">"Puerto Rico"</span>)) <span class="co"># filter rows where string is present in col name, logical</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>                                           <span class="co"># operator ! negates the initial detection </span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">duplicated</span>(acs16<span class="sc">$</span>fips)) </span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">duplicated</span>(incarceration<span class="sc">$</span>fips)) <span class="co"># 0 duplicates in both dfs </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
-<p>From the anti join approach, there was a major discrepancy noticed: the incarceration dataframe aggregates the five borough of New York City into one “New York County,” while ACS data measures all five boroughs separately. Due to the size of these boroughs it is important to aggregate them instead of dropping them since doing so will lead to missing out on a valuable data point.</p>
+<p>From the anti join approach, there was a major discrepancy noticed: the incarceration data frame aggregates the five borough of New York City into one “New York County,” while ACS data measures all five boroughs separately. Due to the size of these boroughs it is important to aggregate them instead of dropping them since doing so will lead to missing out on a valuable data point.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>boroughs <span class="ot">&lt;-</span> acs16 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(fips <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">36005</span>, <span class="co"># Join NY boroughs into one county -- replicate</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>                   <span class="dv">36047</span>, <span class="dv">36061</span>, <span class="dv">36081</span>, <span class="dv">36085</span>)) <span class="co"># incarceration16</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Aggregate columns, due to different types of obsv must summarise each group of cols diff</span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>raw_columns <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">4</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">12</span><span class="sc">:</span><span class="dv">14</span>, <span class="dv">16</span><span class="sc">:</span><span class="dv">26</span>) <span class="co"># Raw columns</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>median_columns <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">15</span>, <span class="dv">31</span>)          <span class="co"># Median columns</span></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>perc_avg_columns <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">11</span>, <span class="dv">27</span><span class="sc">:</span><span class="dv">30</span>)  <span class="co"># Percent average columns </span></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>ny_aggregate <span class="ot">&lt;-</span> boroughs <span class="sc">%&gt;%</span> <span class="co"># Summarize the data frame</span></span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(<span class="fu">all_of</span>(raw_columns), sum),</span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(<span class="fu">all_of</span>(median_columns), median),</span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(<span class="fu">all_of</span>(perc_avg_columns), mean)</span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(ny_aggregate)</span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="co">#aggregate the sumarised rows into one ny county </span></span>
-<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>ny_aggregate <span class="ot">&lt;-</span> ny_aggregate <span class="sc">%&gt;%</span></span>
-<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fips =</span> <span class="dv">36061</span>, <span class="at">name =</span> <span class="st">"New York County"</span>)</span>
-<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>ny_aggregate <span class="ot">&lt;-</span> ny_aggregate <span class="sc">%&gt;%</span> <span class="co">#reorder columns! </span></span>
-<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(fips, name, <span class="fu">everything</span>()) <span class="sc">%&gt;%</span> </span>
-<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fips =</span> <span class="fu">as.character</span>(fips),</span>
-<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>         <span class="at">name =</span> <span class="st">"New York County"</span>)</span>
-<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a><span class="co"># remove the 5 boroughs from acs 16</span></span>
-<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>acs16 <span class="ot">&lt;-</span> acs16 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span>fips <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">36005</span>,</span>
-<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>                                             <span class="dv">36047</span>, <span class="dv">36061</span>, <span class="dv">36081</span>, <span class="dv">36085</span>))</span>
-<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>acs16 <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(acs16, ny_aggregate)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details class="code-fold">
+<summary>Click to show code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>boroughs <span class="ot">&lt;-</span> acs16 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(fips <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">36005</span>, <span class="co"># Join NY boroughs into one county -- replicate</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>                   <span class="dv">36047</span>, <span class="dv">36061</span>, <span class="dv">36081</span>, <span class="dv">36085</span>)) <span class="co"># incarceration16</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Aggregate columns, due to different types of obsv must summarise each group of cols diff</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>raw_columns <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">4</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">12</span><span class="sc">:</span><span class="dv">14</span>, <span class="dv">16</span><span class="sc">:</span><span class="dv">26</span>) <span class="co"># Raw columns</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>median_columns <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">15</span>, <span class="dv">31</span>)          <span class="co"># Median columns</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>perc_avg_columns <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">11</span>, <span class="dv">27</span><span class="sc">:</span><span class="dv">30</span>)  <span class="co"># Percent average columns </span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>ny_aggregate <span class="ot">&lt;-</span> boroughs <span class="sc">%&gt;%</span> <span class="co"># Summarize the data frame</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(<span class="fu">all_of</span>(raw_columns), sum),</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(<span class="fu">all_of</span>(median_columns), median),</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(<span class="fu">all_of</span>(perc_avg_columns), mean)</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(ny_aggregate)</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="co">#aggregate the sumarised rows into one ny county </span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>ny_aggregate <span class="ot">&lt;-</span> ny_aggregate <span class="sc">%&gt;%</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fips =</span> <span class="dv">36061</span>, <span class="at">name =</span> <span class="st">"New York County"</span>)</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>ny_aggregate <span class="ot">&lt;-</span> ny_aggregate <span class="sc">%&gt;%</span> <span class="co">#reorder columns! </span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(fips, name, <span class="fu">everything</span>()) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fips =</span> <span class="fu">as.character</span>(fips),</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>         <span class="at">name =</span> <span class="st">"New York County"</span>)</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a><span class="co"># remove the 5 boroughs from acs 16</span></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>acs16 <span class="ot">&lt;-</span> acs16 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span>fips <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">36005</span>,</span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>                                             <span class="dv">36047</span>, <span class="dv">36061</span>, <span class="dv">36081</span>, <span class="dv">36085</span>))</span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>acs16 <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(acs16, ny_aggregate)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div class="cell" data-fig.margin="true">
 <div class="cell-output-display">
@@ -779,8 +785,11 @@ Using the ACS Data Profile</code></pre>
 </div>
 <p>An alternative approach is to use a complete cases function like below. This also retrieves rows with missing values and allows us to see how Peurto Rico observations are driving the presence of Na values.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>narow <span class="ot">&lt;-</span> acs16[<span class="sc">!</span><span class="fu">complete.cases</span>(acs16),] <span class="co">#acs16 w/ in the df look 4 complete cases in all rows, but negated so it will get the not complete cases (NAs)</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(narow) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details class="code-fold">
+<summary>Click to show code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>narow <span class="ot">&lt;-</span> acs16[<span class="sc">!</span><span class="fu">complete.cases</span>(acs16),] <span class="co">#acs16 w/ in the df look 4 complete cases in all rows, but negated so it will get the not complete cases (NAs)</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(narow) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="merging-both-data-sets" class="level3">
@@ -795,26 +804,29 @@ Using the ACS Data Profile</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>naperc <span class="ot">&lt;-</span> <span class="fu">apply</span>(incarceration_acs16, <span class="dv">2</span>, pmiss) <span class="co">#apply to df, 2 = cols, pmiss function</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(naperc) <span class="co"># 0 NA now </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details class="code-fold">
+<summary>Click to show code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>naperc <span class="ot">&lt;-</span> <span class="fu">apply</span>(incarceration_acs16, <span class="dv">2</span>, pmiss) <span class="co">#apply to df, 2 = cols, pmiss function</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(naperc) <span class="co"># 0 NA now </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>There are very few NA values now that are subsequently dropped</p>
 <p>Below, the education variables from the ACS survey are aggregated into a city human capital index (CHCI) using a basic function.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>chciindex <span class="ot">&lt;-</span> <span class="cf">function</span>(data_frame) {       <span class="co">#takes a data_frame as input, returns newly calc variable</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  chci <span class="ot">&lt;-</span> ((<span class="dv">50</span><span class="sc">*</span> data_frame<span class="sc">$</span>ed_below9e <span class="sc">+</span> <span class="dv">100</span><span class="sc">*</span>data_frame<span class="sc">$</span>ed_hsnodip_e <span class="sc">+</span> <span class="co"># assigning new variable chci  </span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>            <span class="dv">120</span><span class="sc">*</span>data_frame<span class="sc">$</span>ed_hsdip_e <span class="sc">+</span> <span class="dv">130</span><span class="sc">*</span> data_frame<span class="sc">$</span>ed_scollege_e <span class="sc">+</span> </span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>            <span class="dv">140</span><span class="sc">*</span> data_frame<span class="sc">$</span>ed_associate_e <span class="sc">+</span> <span class="dv">190</span><span class="sc">*</span>data_frame<span class="sc">$</span>ed_bachelor_e <span class="sc">+</span> <span class="co">#must specify to look into a df, find these vars</span></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>              <span class="dv">230</span><span class="sc">*</span>data_frame<span class="sc">$</span>graddeg_higher_e))<span class="sc">/</span> <span class="dv">100</span>    <span class="co"># named variables, hence 'df$variable name'</span></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(chci)</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details class="code-fold">
+<summary>Click to show code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>chciindex <span class="ot">&lt;-</span> <span class="cf">function</span>(data_frame) {       <span class="co">#takes a data_frame as input, returns newly calc variable</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  chci <span class="ot">&lt;-</span> ((<span class="dv">50</span><span class="sc">*</span> data_frame<span class="sc">$</span>ed_below9e <span class="sc">+</span> <span class="dv">100</span><span class="sc">*</span>data_frame<span class="sc">$</span>ed_hsnodip_e <span class="sc">+</span> <span class="co"># assigning new variable chci  </span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>            <span class="dv">120</span><span class="sc">*</span>data_frame<span class="sc">$</span>ed_hsdip_e <span class="sc">+</span> <span class="dv">130</span><span class="sc">*</span> data_frame<span class="sc">$</span>ed_scollege_e <span class="sc">+</span> </span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>            <span class="dv">140</span><span class="sc">*</span> data_frame<span class="sc">$</span>ed_associate_e <span class="sc">+</span> <span class="dv">190</span><span class="sc">*</span>data_frame<span class="sc">$</span>ed_bachelor_e <span class="sc">+</span> <span class="co">#must specify to look into a df, find these vars</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>              <span class="dv">230</span><span class="sc">*</span>data_frame<span class="sc">$</span>graddeg_higher_e))<span class="sc">/</span> <span class="dv">100</span>    <span class="co"># named variables, hence 'df$variable name'</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(chci)</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
-</section>
-<section id="part-ii-data-visualization" class="level2">
-<h2 class="anchored" data-anchor-id="part-ii-data-visualization">Part II: Data Visualization</h2>
-<section id="visualization-of-incarceration-rates-by-county-in-the-us" class="level4">
-<h4 class="anchored" data-anchor-id="visualization-of-incarceration-rates-by-county-in-the-us">Visualization of incarceration rates by county in the US</h4>
+<section id="visualizing-jail-and-prison-population-rates-in-the-u.s.-by-county" class="level2">
+<h2 class="anchored" data-anchor-id="visualizing-jail-and-prison-population-rates-in-the-u.s.-by-county">Visualizing jail and prison population rates in the U.S. by county</h2>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -836,9 +848,12 @@ Using the ACS Data Profile</code></pre>
 </div>
 <p>To properly visualize relationships among variables of interest, outliers are removed using a straightforward IQR upper and lower bound method. Approximately 700 observations are removed from the original 3139 observations.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co">#data set no outliers!! </span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>incacs16 <span class="ot">&lt;-</span> <span class="fu">remove_outliers_df</span>(incarceration_acs16)</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(incacs16) <span class="co"># removed 700 outliers </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details class="code-fold">
+<summary>Click to show code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">#data set no outliers!! </span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>incacs16 <span class="ot">&lt;-</span> <span class="fu">remove_outliers_df</span>(incarceration_acs16)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(incacs16) <span class="co"># removed 700 outliers </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div class="cell">
 <div class="cell-output-display">
@@ -882,7 +897,6 @@ Using the ACS Data Profile</code></pre>
 </div>
 </div>
 </div>
-</section>
 <section id="model-i-multiple-regression" class="level4">
 <h4 class="anchored" data-anchor-id="model-i-multiple-regression">Model I: Multiple regression</h4>
 <p>Below are the two regression outputs for the socio-economic predictor variables regressed on the dependent variables jail population rate and prison population rate, respectively.</p>
@@ -939,32 +953,32 @@ Total Jail Population Rate
 Unemployment rate
 </td>
 <td>
-0.694
+1.793
 </td>
 <td>
-3.201
+3.416
 </td>
 <td>
--0.724
+0.220
 </td>
 <td>
-2.751
+2.741
 </td>
 </tr>
 <tr>
 <td style="text-align:left">
 </td>
 <td>
-(2.740)
+(2.668)
 </td>
 <td>
-(2.639)
+(2.573)
 </td>
 <td>
-(2.790)
+(2.714)
 </td>
 <td>
-(2.688)
+(2.616)
 </td>
 </tr>
 <tr>
@@ -984,32 +998,32 @@ Unemployment rate
 Median Rent
 </td>
 <td>
-0.382<sup>***</sup>
+0.292<sup>***</sup>
 </td>
 <td>
-0.009
+-0.061
 </td>
 <td>
-0.411<sup>***</sup>
+0.313<sup>***</sup>
 </td>
 <td>
-0.011
+-0.065
 </td>
 </tr>
 <tr>
 <td style="text-align:left">
 </td>
 <td>
-(0.066)
-</td>
-<td>
-(0.071)
+(0.065)
 </td>
 <td>
 (0.069)
 </td>
 <td>
-(0.072)
+(0.067)
+</td>
+<td>
+(0.070)
 </td>
 </tr>
 <tr>
@@ -1029,32 +1043,32 @@ Median Rent
 Poverty single mother
 </td>
 <td>
--0.765
+-0.439
 </td>
 <td>
--0.445
+-0.089
 </td>
 <td>
--1.011
+-0.690
 </td>
 <td>
--0.514
+-0.174
 </td>
 </tr>
 <tr>
 <td style="text-align:left">
 </td>
 <td>
-(0.753)
+(0.734)
 </td>
 <td>
-(0.669)
+(0.654)
 </td>
 <td>
-(0.755)
+(0.736)
 </td>
 <td>
-(0.671)
+(0.655)
 </td>
 </tr>
 <tr>
@@ -1074,32 +1088,32 @@ Poverty single mother
 Poverty all people
 </td>
 <td>
-8.776<sup>***</sup>
+9.112<sup>***</sup>
 </td>
 <td>
-1.163
+1.333
 </td>
 <td>
-10.822<sup>***</sup>
+11.205<sup>***</sup>
 </td>
 <td>
-1.888
+2.222
 </td>
 </tr>
 <tr>
 <td style="text-align:left">
 </td>
 <td>
-(2.121)
+(2.078)
 </td>
 <td>
-(1.973)
+(1.933)
 </td>
 <td>
-(2.190)
+(2.145)
 </td>
 <td>
-(2.046)
+(2.005)
 </td>
 </tr>
 <tr>
@@ -1119,16 +1133,16 @@ Poverty all people
 Household single mother
 </td>
 <td>
-0.075<sup>***</sup>
+0.073<sup>***</sup>
 </td>
 <td>
-0.054<sup>***</sup>
+0.053<sup>***</sup>
 </td>
 <td>
-0.061<sup>***</sup>
+0.053<sup>**</sup>
 </td>
 <td>
-0.040<sup>*</sup>
+0.029
 </td>
 </tr>
 <tr>
@@ -1164,16 +1178,16 @@ Household single mother
 Household single father
 </td>
 <td>
--0.035
+-0.031
 </td>
 <td>
-0.005
+0.010
 </td>
 <td>
--0.049
+-0.045
 </td>
 <td>
-0.012
+0.017
 </td>
 </tr>
 <tr>
@@ -1183,13 +1197,13 @@ Household single father
 (0.036)
 </td>
 <td>
-(0.034)
+(0.033)
 </td>
 <td>
-(0.041)
+(0.040)
 </td>
 <td>
-(0.038)
+(0.037)
 </td>
 </tr>
 <tr>
@@ -1254,10 +1268,10 @@ Native Hawaiian
 <td>
 </td>
 <td>
--0.150<sup>*</sup>
+-0.135
 </td>
 <td>
--0.008
+0.005
 </td>
 </tr>
 <tr>
@@ -1268,10 +1282,10 @@ Native Hawaiian
 <td>
 </td>
 <td>
-(0.087)
+(0.085)
 </td>
 <td>
-(0.081)
+(0.079)
 </td>
 </tr>
 <tr>
@@ -1336,7 +1350,7 @@ Asian
 <td>
 </td>
 <td>
--0.017
+-0.015
 </td>
 <td>
 -0.025<sup>**</sup>
@@ -1377,7 +1391,7 @@ American Indian
 <td>
 </td>
 <td>
--0.010
+-0.009
 </td>
 <td>
 -0.003
@@ -1418,10 +1432,10 @@ Hispanic
 <td>
 </td>
 <td>
-0.001
+0.002
 </td>
 <td>
-0.003
+0.004
 </td>
 </tr>
 <tr>
@@ -1455,16 +1469,16 @@ Hispanic
 Household median income
 </td>
 <td>
--0.005<sup>***</sup>
-</td>
-<td>
 -0.004<sup>***</sup>
 </td>
 <td>
--0.004<sup>***</sup>
+-0.003<sup>***</sup>
 </td>
 <td>
--0.004<sup>***</sup>
+-0.003<sup>**</sup>
+</td>
+<td>
+-0.003<sup>**</sup>
 </td>
 </tr>
 <tr>
@@ -1500,16 +1514,16 @@ Household median income
 Non citizen population
 </td>
 <td>
--0.025
+-0.020
 </td>
 <td>
--0.007
+-0.006
 </td>
 <td>
--0.037<sup>**</sup>
+-0.032<sup>*</sup>
 </td>
 <td>
--0.015
+-0.014
 </td>
 </tr>
 <tr>
@@ -1522,10 +1536,10 @@ Non citizen population
 (0.016)
 </td>
 <td>
-(0.018)
+(0.017)
 </td>
 <td>
-(0.017)
+(0.016)
 </td>
 </tr>
 <tr>
@@ -1545,16 +1559,16 @@ Non citizen population
 Foreign born
 </td>
 <td>
-0.016
+0.013
 </td>
 <td>
 0.004
 </td>
 <td>
-0.028<sup>**</sup>
+0.024<sup>*</sup>
 </td>
 <td>
-0.009
+0.008
 </td>
 </tr>
 <tr>
@@ -1594,10 +1608,10 @@ Disabled population
 <td>
 </td>
 <td>
-0.008<sup>*</sup>
+0.010<sup>**</sup>
 </td>
 <td>
--0.0002
+0.002
 </td>
 </tr>
 <tr>
@@ -1611,7 +1625,7 @@ Disabled population
 (0.005)
 </td>
 <td>
-(0.005)
+(0.004)
 </td>
 </tr>
 <tr>
@@ -1678,12 +1692,12 @@ as.factor(state)AL
 <td>
 </td>
 <td>
-73.927
+-14.409
 </td>
 <td>
 </td>
 <td>
-50.263
+-42.048
 </td>
 </tr>
 <tr>
@@ -1692,12 +1706,12 @@ as.factor(state)AL
 <td>
 </td>
 <td>
-(68.383)
+(68.912)
 </td>
 <td>
 </td>
 <td>
-(71.877)
+(71.987)
 </td>
 </tr>
 <tr>
@@ -1760,7 +1774,7 @@ as.factor(state)WV
 <td>
 </td>
 <td>
--25.260
+-114.257
 </td>
 </tr>
 <tr>
@@ -1773,7 +1787,7 @@ as.factor(state)WV
 <td>
 </td>
 <td>
-(71.338)
+(71.502)
 </td>
 </tr>
 <tr>
@@ -1799,7 +1813,7 @@ as.factor(state)WY
 <td>
 </td>
 <td>
-17.599
+-100.485
 </td>
 </tr>
 <tr>
@@ -1812,7 +1826,7 @@ as.factor(state)WY
 <td>
 </td>
 <td>
-(91.390)
+(92.716)
 </td>
 </tr>
 <tr>
@@ -1832,32 +1846,32 @@ as.factor(state)WY
 Constant
 </td>
 <td>
-326.897<sup>***</sup>
+291.922<sup>***</sup>
 </td>
 <td>
-569.090<sup>***</sup>
+638.239<sup>***</sup>
 </td>
 <td>
-253.247<sup>***</sup>
+217.312<sup>***</sup>
 </td>
 <td>
-569.525<sup>***</sup>
+635.270<sup>***</sup>
 </td>
 </tr>
 <tr>
 <td style="text-align:left">
 </td>
 <td>
-(70.277)
+(69.259)
 </td>
 <td>
-(97.389)
+(97.021)
 </td>
 <td>
-(74.171)
+(73.050)
 </td>
 <td>
-(100.404)
+(99.817)
 </td>
 </tr>
 <tr>
@@ -1881,16 +1895,16 @@ Constant
 Observations
 </td>
 <td>
-2,427
+2,423
 </td>
 <td>
-2,427
+2,423
 </td>
 <td>
-2,427
+2,423
 </td>
 <td>
-2,427
+2,423
 </td>
 </tr>
 <tr>
@@ -1898,16 +1912,16 @@ Observations
 R<sup>2</sup>
 </td>
 <td>
-0.118
+0.117
 </td>
 <td>
-0.342
+0.336
 </td>
 <td>
-0.126
+0.125
 </td>
 <td>
-0.345
+0.340
 </td>
 </tr>
 <tr>
@@ -1915,16 +1929,16 @@ R<sup>2</sup>
 Adjusted R<sup>2</sup>
 </td>
 <td>
-0.115
+0.113
 </td>
 <td>
-0.326
+0.320
 </td>
 <td>
-0.120
+0.119
 </td>
 <td>
-0.326
+0.322
 </td>
 </tr>
 <tr>
@@ -1932,16 +1946,16 @@ Adjusted R<sup>2</sup>
 Residual Std. Error
 </td>
 <td>
-309.936 (df = 2416)
+303.651 (df = 2412)
 </td>
 <td>
-270.459 (df = 2368)
+265.845 (df = 2364)
 </td>
 <td>
-308.963 (df = 2409)
+302.642 (df = 2405)
 </td>
 <td>
-270.344 (df = 2361)
+265.566 (df = 2357)
 </td>
 </tr>
 <tr>
@@ -1949,16 +1963,16 @@ Residual Std. Error
 F Statistic
 </td>
 <td>
-32.453<sup>***</sup> (df = 10; 2416)
+31.849<sup>***</sup> (df = 10; 2412)
 </td>
 <td>
-21.223<sup>***</sup> (df = 58; 2368)
+20.661<sup>***</sup> (df = 58; 2364)
 </td>
 <td>
-20.519<sup>***</sup> (df = 17; 2409)
+20.220<sup>***</sup> (df = 17; 2405)
 </td>
 <td>
-19.093<sup>***</sup> (df = 65; 2361)
+18.659<sup>***</sup> (df = 65; 2357)
 </td>
 </tr>
 <tr>
@@ -2024,26 +2038,26 @@ Total Prison Population Rate
 Unemployment rate
 </td>
 <td>
-0.443
+-7.632<sup>**</sup>
 </td>
 <td>
-2.621
+-4.538
 </td>
 <td>
-2.235
+-5.395
 </td>
 </tr>
 <tr>
 <td style="text-align:left">
 </td>
 <td>
-(3.484)
+(3.531)
 </td>
 <td>
-(3.324)
+(3.355)
 </td>
 <td>
-(3.385)
+(3.413)
 </td>
 </tr>
 <tr>
@@ -2061,23 +2075,23 @@ Unemployment rate
 Median Rent
 </td>
 <td>
-0.394<sup>***</sup>
+0.396<sup>***</sup>
 </td>
 <td>
-0.091
+0.029
 </td>
 <td>
-0.066
+0.003
 </td>
 </tr>
 <tr>
 <td style="text-align:left">
 </td>
 <td>
-(0.084)
+(0.085)
 </td>
 <td>
-(0.089)
+(0.090)
 </td>
 <td>
 (0.091)
@@ -2098,26 +2112,26 @@ Median Rent
 Poverty single mother
 </td>
 <td>
-2.209<sup>**</sup>
+0.573
 </td>
 <td>
-1.441<sup>*</sup>
+-0.249
 </td>
 <td>
-1.492<sup>*</sup>
+-0.218
 </td>
 </tr>
 <tr>
 <td style="text-align:left">
 </td>
 <td>
-(0.957)
+(0.971)
 </td>
 <td>
-(0.842)
+(0.852)
 </td>
 <td>
-(0.845)
+(0.855)
 </td>
 </tr>
 <tr>
@@ -2135,26 +2149,26 @@ Poverty single mother
 Poverty all people
 </td>
 <td>
-5.624<sup>**</sup>
+8.669<sup>***</sup>
 </td>
 <td>
--1.797
+1.309
 </td>
 <td>
--1.644
+1.087
 </td>
 </tr>
 <tr>
 <td style="text-align:left">
 </td>
 <td>
-(2.697)
+(2.749)
 </td>
 <td>
-(2.485)
+(2.521)
 </td>
 <td>
-(2.578)
+(2.615)
 </td>
 </tr>
 <tr>
@@ -2172,13 +2186,13 @@ Poverty all people
 Household single mother
 </td>
 <td>
-0.068<sup>***</sup>
+0.088<sup>***</sup>
 </td>
 <td>
-0.053<sup>***</sup>
+0.067<sup>***</sup>
 </td>
 <td>
-0.028
+0.059<sup>**</sup>
 </td>
 </tr>
 <tr>
@@ -2191,7 +2205,7 @@ Household single mother
 (0.015)
 </td>
 <td>
-(0.025)
+(0.026)
 </td>
 </tr>
 <tr>
@@ -2209,23 +2223,23 @@ Household single mother
 Household single father
 </td>
 <td>
-0.007
+-0.001
 </td>
 <td>
-0.064
+0.067
 </td>
 <td>
-0.086<sup>*</sup>
+0.068
 </td>
 </tr>
 <tr>
 <td style="text-align:left">
 </td>
 <td>
-(0.046)
+(0.047)
 </td>
 <td>
-(0.043)
+(0.044)
 </td>
 <td>
 (0.048)
@@ -2250,7 +2264,7 @@ Household married
 <td>
 </td>
 <td>
--0.013
+-0.012
 </td>
 </tr>
 <tr>
@@ -2283,7 +2297,7 @@ Native Hawaiian
 <td>
 </td>
 <td>
-0.051
+0.103
 </td>
 </tr>
 <tr>
@@ -2294,7 +2308,7 @@ Native Hawaiian
 <td>
 </td>
 <td>
-(0.102)
+(0.104)
 </td>
 </tr>
 <tr>
@@ -2316,7 +2330,7 @@ Black
 <td>
 </td>
 <td>
-0.002
+-0.0003
 </td>
 </tr>
 <tr>
@@ -2327,7 +2341,7 @@ Black
 <td>
 </td>
 <td>
-(0.002)
+(0.003)
 </td>
 </tr>
 <tr>
@@ -2349,7 +2363,7 @@ Asian
 <td>
 </td>
 <td>
--0.017
+-0.020
 </td>
 </tr>
 <tr>
@@ -2382,7 +2396,7 @@ American Indian
 <td>
 </td>
 <td>
-0.007
+0.016<sup>*</sup>
 </td>
 </tr>
 <tr>
@@ -2415,7 +2429,7 @@ Hispanic
 <td>
 </td>
 <td>
--0.005
+-0.004
 </td>
 </tr>
 <tr>
@@ -2444,10 +2458,10 @@ Hispanic
 Household median income
 </td>
 <td>
--0.009<sup>***</sup>
+-0.010<sup>***</sup>
 </td>
 <td>
--0.008<sup>***</sup>
+-0.007<sup>***</sup>
 </td>
 <td>
 -0.007<sup>***</sup>
@@ -2481,13 +2495,13 @@ Household median income
 Non citizen population
 </td>
 <td>
+-0.016
+</td>
+<td>
+-0.005
+</td>
+<td>
 -0.007
-</td>
-<td>
--0.002
-</td>
-<td>
--0.001
 </td>
 </tr>
 <tr>
@@ -2497,7 +2511,7 @@ Non citizen population
 (0.022)
 </td>
 <td>
-(0.020)
+(0.021)
 </td>
 <td>
 (0.021)
@@ -2518,13 +2532,13 @@ Non citizen population
 Foreign born
 </td>
 <td>
-0.012
+0.017
 </td>
 <td>
--0.006
+-0.005
 </td>
 <td>
-0.004
+0.007
 </td>
 </tr>
 <tr>
@@ -2559,7 +2573,7 @@ Disable
 <td>
 </td>
 <td>
-0.008
+0.005
 </td>
 </tr>
 <tr>
@@ -2627,10 +2641,10 @@ as.factor(state)AL
 <td>
 </td>
 <td>
--159.949<sup>*</sup>
+-14.921
 </td>
 <td>
--135.881
+41.939
 </td>
 </tr>
 <tr>
@@ -2639,10 +2653,10 @@ as.factor(state)AL
 <td>
 </td>
 <td>
-(86.130)
+(89.852)
 </td>
 <td>
-(90.540)
+(93.897)
 </td>
 </tr>
 <tr>
@@ -2695,7 +2709,7 @@ as.factor(state)WV
 <td>
 </td>
 <td>
--155.199<sup>*</sup>
+133.347
 </td>
 </tr>
 <tr>
@@ -2706,7 +2720,7 @@ as.factor(state)WV
 <td>
 </td>
 <td>
-(89.861)
+(93.264)
 </td>
 </tr>
 <tr>
@@ -2728,7 +2742,7 @@ as.factor(state)WY
 <td>
 </td>
 <td>
--155.407
+8.770
 </td>
 </tr>
 <tr>
@@ -2739,7 +2753,7 @@ as.factor(state)WY
 <td>
 </td>
 <td>
-(115.119)
+(120.935)
 </td>
 </tr>
 <tr>
@@ -2757,26 +2771,26 @@ as.factor(state)WY
 Constant
 </td>
 <td>
-671.836<sup>***</sup>
+762.967<sup>***</sup>
 </td>
 <td>
-1,036.968<sup>***</sup>
+986.178<sup>***</sup>
 </td>
 <td>
-973.308<sup>***</sup>
+919.500<sup>***</sup>
 </td>
 </tr>
 <tr>
 <td style="text-align:left">
 </td>
 <td>
-(89.350)
+(91.640)
 </td>
 <td>
-(122.664)
+(126.503)
 </td>
 <td>
-(126.474)
+(130.197)
 </td>
 </tr>
 <tr>
@@ -2798,13 +2812,13 @@ Constant
 Observations
 </td>
 <td>
-2,427
+2,423
 </td>
 <td>
-2,427
+2,423
 </td>
 <td>
-2,427
+2,423
 </td>
 </tr>
 <tr>
@@ -2812,13 +2826,13 @@ Observations
 R<sup>2</sup>
 </td>
 <td>
-0.122
+0.123
 </td>
 <td>
-0.357
+0.360
 </td>
 <td>
-0.359
+0.363
 </td>
 </tr>
 <tr>
@@ -2826,13 +2840,13 @@ R<sup>2</sup>
 Adjusted R<sup>2</sup>
 </td>
 <td>
-0.118
+0.119
 </td>
 <td>
-0.341
+0.344
 </td>
 <td>
-0.342
+0.345
 </td>
 </tr>
 <tr>
@@ -2840,13 +2854,13 @@ Adjusted R<sup>2</sup>
 Residual Std. Error
 </td>
 <td>
-394.052 (df = 2416)
+401.773 (df = 2412)
 </td>
 <td>
-340.650 (df = 2368)
+346.626 (df = 2364)
 </td>
 <td>
-340.538 (df = 2361)
+346.394 (df = 2357)
 </td>
 </tr>
 <tr>
@@ -2854,13 +2868,13 @@ Residual Std. Error
 F Statistic
 </td>
 <td>
-33.602<sup>***</sup> (df = 10; 2416)
+33.767<sup>***</sup> (df = 10; 2412)
 </td>
 <td>
-22.664<sup>***</sup> (df = 58; 2368)
+22.934<sup>***</sup> (df = 58; 2364)
 </td>
 <td>
-20.368<sup>***</sup> (df = 65; 2361)
+20.648<sup>***</sup> (df = 65; 2357)
 </td>
 </tr>
 <tr>
@@ -2877,9 +2891,12 @@ F Statistic
 </tr>
 </tbody></table>
 </section>
+</section>
+<section id="experimenting-with-non-linear-models-and-predictive-analyses" class="level2">
+<h2 class="anchored" data-anchor-id="experimenting-with-non-linear-models-and-predictive-analyses">Experimenting with non-linear models and predictive analyses</h2>
 <section id="random-forest-model" class="level3">
 <h3 class="anchored" data-anchor-id="random-forest-model">Random Forest Model</h3>
-<p>Upong splitting datsa into training and testing sets, rhe random forest model can now be run on the training data set. Results are below.</p>
+<p>Upon splitting data into training and testing sets, the random forest model can now be run on the training data set. Results are below.</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -2889,8 +2906,8 @@ Call:
                      Number of trees: 500
 No. of variables tried at each split: 7
 
-          Mean of squared residuals: 89780.63
-                    % Var explained: 18.75</code></pre>
+          Mean of squared residuals: 83765.03
+                    % Var explained: 15.9</code></pre>
 </div>
 <div class="cell-output-display">
 <div>
@@ -2900,14 +2917,14 @@ No. of variables tried at each split: 7
 </div>
 </div>
 </div>
-<section id="evaluating-the-model-predicting-on-test-data-mean-squared-error-mse-and-r-sqaured" class="level4">
-<h4 class="anchored" data-anchor-id="evaluating-the-model-predicting-on-test-data-mean-squared-error-mse-and-r-sqaured">Evaluating the Model: Predicting on test data, Mean squared error (MSE), and R Sqaured</h4>
+<section id="evaluating-the-model-predicting-on-test-data-mean-squared-error-mse-and-r-squared" class="level4">
+<h4 class="anchored" data-anchor-id="evaluating-the-model-predicting-on-test-data-mean-squared-error-mse-and-r-squared">Evaluating the Model: Predicting on test data, Mean squared error (MSE), and R Squared</h4>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "Mean Squared Error: 91512.9776342382"</code></pre>
+<pre><code>[1] "Mean Squared Error: 94676.203195051"</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "R-squared: 0.117753911646608"</code></pre>
+<pre><code>[1] "R-squared: 0.168614084304311"</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -2917,24 +2934,27 @@ Call:
                      Number of trees: 500
 No. of variables tried at each split: 12
 
-          Mean of squared residuals: 90487.94
-                    % Var explained: 18.11</code></pre>
+          Mean of squared residuals: 85343.1
+                    % Var explained: 14.32</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "Tuned Model Mean Squared Error: 92087.8640136729"</code></pre>
+<pre><code>[1] "Tuned Model Mean Squared Error: 94961.7418593296"</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>impmse <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(impdf, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(Variables, <span class="st">`</span><span class="at">%IncMSE</span><span class="st">`</span>), <span class="at">y =</span> <span class="st">`</span><span class="at">%IncMSE</span><span class="st">`</span>)) <span class="sc">+</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">fill =</span> <span class="st">"steelblue"</span>) <span class="sc">+</span></span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Variable Importance Plot"</span>,</span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Variables"</span>,</span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"% increase in Mean Squared error"</span>) <span class="sc">+</span></span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">10</span>) <span class="sc">+</span></span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>, <span class="at">size =</span> <span class="dv">12</span>, <span class="at">face =</span> <span class="st">"bold"</span>),</span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">10</span>),</span>
-<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">8</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details class="code-fold">
+<summary>Click to show code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>impmse <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(impdf, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(Variables, <span class="st">`</span><span class="at">%IncMSE</span><span class="st">`</span>), <span class="at">y =</span> <span class="st">`</span><span class="at">%IncMSE</span><span class="st">`</span>)) <span class="sc">+</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">fill =</span> <span class="st">"steelblue"</span>) <span class="sc">+</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Variable Importance Plot"</span>,</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Variables"</span>,</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"% increase in Mean Squared error"</span>) <span class="sc">+</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">10</span>) <span class="sc">+</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>, <span class="at">size =</span> <span class="dv">12</span>, <span class="at">face =</span> <span class="st">"bold"</span>),</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">10</span>),</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">8</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div class="cell">
 <div class="cell-output-display">

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>CalOSHA employer inspections, violations, and citations in the aftermath of the 2025 Los Angeles Fires – Diego Flores</title>
+<title>Analyzing CalOSHA’s regulatory role in the aftermath of the 2025 Los Angeles Fires – Diego Flores</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -120,6 +120,9 @@ ul.task-list li input[type="checkbox"] {
 </div>
       </div> <!-- /container-fluid -->
     </nav>
+  <div id="quarto-announcement" data-announcement-id="b310472b19e3939d01049a10009296e8" class="alert alert-primary hidden"><i class="bi bi-info-circle quarto-announcement-icon"></i><div class="quarto-announcement-content">
+<p>Site currently under construction</p>
+</div><i class="bi bi-x-lg quarto-announcement-action"></i></div>
 </header>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
@@ -130,7 +133,11 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#calosha-employer-inspections-violations-and-citations-in-the-aftermath-of-the-2025-los-angeles-fires" id="toc-calosha-employer-inspections-violations-and-citations-in-the-aftermath-of-the-2025-los-angeles-fires" class="nav-link active" data-scroll-target="#calosha-employer-inspections-violations-and-citations-in-the-aftermath-of-the-2025-los-angeles-fires">CalOSHA employer inspections, violations, and citations in the aftermath of the 2025 Los Angeles Fires</a></li>
+  <li><a href="#guiding-question" id="toc-guiding-question" class="nav-link active" data-scroll-target="#guiding-question"><strong>Guiding Question:</strong></a></li>
+  <li><a href="#takeaways" id="toc-takeaways" class="nav-link" data-scroll-target="#takeaways">Takeaways</a></li>
+  <li><a href="#mapping-in-progress" id="toc-mapping-in-progress" class="nav-link" data-scroll-target="#mapping-in-progress">Mapping (in progress)</a></li>
+  <li><a href="#improving-the-osha-wildfire-search" id="toc-improving-the-osha-wildfire-search" class="nav-link" data-scroll-target="#improving-the-osha-wildfire-search">Improving the OSHA wildfire search</a></li>
+  <li><a href="#example-finding-keywords-with-osha-accident-data-using-str_detect" id="toc-example-finding-keywords-with-osha-accident-data-using-str_detect" class="nav-link" data-scroll-target="#example-finding-keywords-with-osha-accident-data-using-str_detect">Example: Finding keywords with OSHA Accident data using str_detect</a></li>
   </ul>
 </nav>
     </div>
@@ -139,7 +146,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">CalOSHA employer inspections, violations, and citations in the aftermath of the 2025 Los Angeles Fires</h1>
+<h1 class="title">Analyzing CalOSHA’s regulatory role in the aftermath of the 2025 Los Angeles Fires</h1>
 </div>
 
 
@@ -156,10 +163,87 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="calosha-employer-inspections-violations-and-citations-in-the-aftermath-of-the-2025-los-angeles-fires" class="level3">
-<h3 class="anchored" data-anchor-id="calosha-employer-inspections-violations-and-citations-in-the-aftermath-of-the-2025-los-angeles-fires">CalOSHA employer inspections, violations, and citations in the aftermath of the 2025 Los Angeles Fires</h3>
-<p>code for the automated flow</p>
-<p><img src="images/wage_ffood.png" class="img-fluid"></p>
+<p>Below find an analysis of CalOSHA’s inspections and employer violations directly related to the fire &amp; disaster clean up from the 2025 Altadena and Palisades fires.</p>
+<hr>
+<section id="guiding-question" class="level3">
+<h3 class="anchored" data-anchor-id="guiding-question"><strong>Guiding Question:</strong></h3>
+<blockquote class="blockquote">
+<p><strong><em>What inspections, violations, or accidents are we seeing in the aftermath of the Palisades and Eaton fires, according to public CalOSHA inspection and violation records?</em></strong></p>
+</blockquote>
+</section>
+<section id="takeaways" class="level3">
+<h3 class="anchored" data-anchor-id="takeaways">Takeaways</h3>
+<p><strong>Date-time (temporal) analyses for CalOSHA inspections 2025</strong></p>
+<p>Dataframes are already set as date types so now I must move on to defining time units with functions year month quarter from lubridate. additionally lets set floor dates since we are concerned with reporting monthly cases, using floor_date(dt, unit = “month”) then rounds down to the nearest month, in effect creating a clean monthly bucket/ classification</p>
+<p>Analyses beyond counts: counts can mislead always normalize/ standardize when possible</p>
+<ul>
+<li>Citations per inspections (citation rate per inspections). how many avg citations occur per inspection.</li>
+<li><strong>Violation rate per inspection:</strong> 0.61. In other words less than one violation found per inspection.</li>
+<li>% inspections with ≥ 1 violation: done 18%</li>
+<li>Violations per cited workplace: $459</li>
+<li>inspection rate per month/ per quarter:</li>
+</ul>
+<p>All cases that are potentially related to the wildfire belong to the Los Angeles district office (0950641) and are concentrated in the Pacific Palisades (90272), Malibu (90265), and Altadena (91001). The industries represented are numerous and as follows:</p>
+<ul>
+<li><strong>Administration of Conservation Programs</strong> (<a href="https://www.census.gov/naics/?input=924120&amp;year=2022&amp;details=924120">924120</a>)</li>
+<li><strong>Framing Contractors (</strong><a href="https://www.census.gov/naics/?input=238130&amp;year=2022&amp;details=238130">238130</a>)</li>
+<li><strong>Site preparation contractors</strong> (<a href="https://www.census.gov/naics/?input=238910&amp;year=2022&amp;details=238910">238910</a>)</li>
+<li><strong>Commercial and Institutional Building Construction (</strong><a href="https://www.census.gov/naics/?input=236220&amp;year=2022&amp;details=236220">236220</a>)</li>
+<li><strong>New Single-Family Housing Construction</strong> <a href="https://www.census.gov/naics/?input=236115%5C&amp;year=2022&amp;details=236115">236115</a></li>
+<li><strong>Industrial Building Construction</strong> <a href="https://www.census.gov/naics/?input=236210&amp;year=2022&amp;details=236210">236210</a></li>
+<li><strong>Electrical Contractors and Other Wiring Installation Contractors</strong> <a href="https://www.census.gov/naics/?input=238210&amp;year=2022&amp;details=238210">238210</a></li>
+<li><strong>Labor Unions and Similar Labor Organizations (</strong><a href="https://www.census.gov/naics/?input=813930&amp;year=2022&amp;details=813930">813930</a>)</li>
+<li><strong>Unknown/ invalid establishment</strong> (99999)
+<ul>
+<li>This is possibly a residential area. When looking up the provided site address 2566 Ganesha Ave. Alatdena CA 91001</li>
+</ul></li>
+<li><strong>Remediation Services (</strong>562910)</li>
+<li><strong>Hazardous Waste Collection (</strong>562112)</li>
+<li><strong>All Other Specialty Trade Contractors (</strong><a href="https://www.census.gov/naics/?input=238990&amp;year=2022&amp;details=238990">238990</a>)</li>
+</ul>
+<hr>
+<p>Inspections had anywhere from zero to 265 employees present in the establishment.</p>
+<p>The list of industries will continue to be updated as more cases and different industries come up in the OSHA databases</p>
+<!-- -->
+<p><strong>Industry and union presence during inspection</strong></p>
+<p><strong>Inspection type</strong></p>
+</section>
+<section id="mapping-in-progress" class="level3">
+<h3 class="anchored" data-anchor-id="mapping-in-progress">Mapping (in progress)</h3>
+</section>
+<section id="improving-the-osha-wildfire-search" class="level2">
+<h2 class="anchored" data-anchor-id="improving-the-osha-wildfire-search">Improving the OSHA wildfire search</h2>
+<p>its clear that the IMIS database and the data portal are both up to date. One of the main reasons during our search I am not finding all wildfire related cases is because some cases are being inspected by different offices such as</p>
+<ul>
+<li><p>Inspection: 1733571.015 - Rubio Canon Land &amp; Water Association Inspection Information - <strong>Office: Process Safety Management - South Non-Refinery</strong></p>
+<ul>
+<li>Not the LA office? Wonder why but still this is certainly a wildfire related inspection</li>
+</ul></li>
+<li><p>IMIS search 1: 01/07/2025 to 06/29/2025, osha office: all, site zip code: 91001,</p>
+<ul>
+<li>Inspection: 1832273.015 - Electro Construction Corp Inspection Information - Office: Riverside District Office</li>
+</ul></li>
+<li><p>Friday july 11th: 1st search Pacific palisades 90272, all offices, jan 7 - present</p>
+<ul>
+<li><p>Inspection: 1821816.015 - Golden State Construction</p></li>
+<li><p>Inspection: 1820812.015 - Hart Built Construction</p></li>
+<li><p>41 total cases when looking up zip code 90272 as of 7/11/25, makes no sense.. lets see which ones I am missing</p></li>
+</ul></li>
+<li><p><strong>New offices to search for:</strong> Long Beach District Office</p>
+<ul>
+<li>I dont think this logic from the first bullet point is correct.. what I mean is searching by office isnt the best strategy to get my missing cases.. What could the filter be that i am missing? because I have the two cases from malibu (2/2), (37/41) in PP, (24/25) in altadena</li>
+</ul></li>
+</ul>
+<section id="looking-for-violations" class="level4">
+<h4 class="anchored" data-anchor-id="looking-for-violations"><strong>Looking for violations:</strong></h4>
+<p>90272”,“90265”,“90290”, “91001”, “91107</p>
+<p>90272: IMIS date range, case status all, violation status: with violations - yields 0 cases</p>
+<p>90265: None</p>
+<p>90290: mi wuk sugar pine fire dept</p>
+</section>
+</section>
+<section id="example-finding-keywords-with-osha-accident-data-using-str_detect" class="level1">
+<h1>Example: Finding keywords with OSHA Accident data using str_detect</h1>
 
 
 </section>
