@@ -164,8 +164,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#visualizing-data" id="toc-visualizing-data" class="nav-link active" data-scroll-target="#visualizing-data">Visualizing data</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -201,362 +207,3593 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>This project contains the code belonging to both an honors thesis and a fulbright garcia robles fellowship while I worked at UNAM, Mexico’s National University. You can read the full paper here.</p>
+<p>This project belongs to a political science thesis and a Fulbright Garcia-Robles fellowship while I worked at UNAM, Mexico’s National University. You can read the full paper <a href="images/d_flores_thesis_final_copy.pdf">here.</a></p>
 <div class="cell">
-<details open="" class="code-fold">
+<details class="code-fold">
 <summary>Click to show code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stargazer)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sjPlot)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sjmisc)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sjlabelled)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(foreign)</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(haven)</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stargazer)</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(infer)</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(xtable)</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages(DataExplorer) </span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DataExplorer)</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages("cheatsheet")</span></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cheatsheet)</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sjPlot)</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sjmisc)</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sjlabelled)</span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(foreign)</span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MatchIt)</span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(naniar)</span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("arsenal")</span></span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(arsenal)</span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("vtable")</span></span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(vtable)</span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="co">#Marginalization data </span></span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>marginalization2 <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"data_raw/marg_index_06anexo_base.csv"</span>) <span class="co">#marg by municipality 2010, columns str are not characters</span></span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(marginalization2)   <span class="co">#2463 obs. of  15 variables, variables are all correct type</span></span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(marginalization2)) </span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="co">#Homicide data</span></span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>esochomicide <span class="ot">&lt;-</span> <span class="fu">read_dta</span>(<span class="st">"data_raw/ESOC_Mexico_drug_related_murders.dta"</span>) <span class="co">#all homicide data 2006- 11 </span></span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>homicidesub <span class="ot">&lt;-</span> esochomicide <span class="sc">%&gt;%</span> </span>
-<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2010</span>)    <span class="co">#subset ESOC homicide data for 2010 values</span></span>
-<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>homicidesub2 <span class="ot">&lt;-</span> homicidesub[,<span class="fu">c</span>(<span class="st">"idunico"</span>, <span class="st">"deaths_total"</span>,</span>
-<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>                                 <span class="st">"deaths_execution"</span>, <span class="st">"deaths_confront"</span>, <span class="st">"deaths_aggression"</span>)] </span>
-<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a><span class="co">#sum(is.na(homicidesub2))  </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sjPlot)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sjmisc)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sjlabelled)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(foreign)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(haven)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(infer)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(xtable)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages(DataExplorer) </span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DataExplorer)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages("cheatsheet")</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cheatsheet)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sjPlot)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sjmisc)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sjlabelled)</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(foreign)</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MatchIt)</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(naniar)</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("arsenal")</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(arsenal)</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stargazer)</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("vtable")</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(vtable)</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="co">#Marginalization data </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Loading control variable data </span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">#Primary control variables</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>mex_variables <span class="ot">&lt;-</span> <span class="fu">read_dta</span>(<span class="st">"/Users/diegoflores/Poli_90_intro_2/Prof_Bezares_mex_vars_2010.dta"</span>) <span class="co">#df w controls including:km^2 of municipality, transfers (central to municipio), etc</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">View</span>(mex_variables) </span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str</span>(mex_variables)</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>(mex_variables)</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>mex_variables_2 <span class="ot">&lt;-</span> <span class="fu">subset</span>(mex_variables, </span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>                          <span class="at">select =</span> <span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">7</span><span class="sc">:</span><span class="dv">11</span>, <span class="dv">15</span><span class="sc">:</span><span class="dv">21</span>, <span class="dv">23</span><span class="sc">:</span><span class="dv">36</span>))  <span class="co">#with out dummy variables </span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">colSums</span>(<span class="fu">is.na</span>(mex_variables_2))                       <span class="co">#checks total number of NA values by column </span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  mex_variables_2[mex_variables_2 <span class="sc">==</span> <span class="dv">0</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span>           <span class="co">#replaces ) with NA values </span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>                                                        <span class="co">#removed dummy variable in above subset in                                                            order to replace 0's with NA</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="co">#check for dummy variables again</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">colSums</span>(<span class="fu">is.na</span>(mex_variables_2)) <span class="co">#make sure that govt transfer value of 0 means NA and not zero transfer.. it probably does so use mex variables 3</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Check for Duplicates </span></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>mex_variables_2[<span class="fu">duplicated</span>(mex_variables_2<span class="sc">$</span>muncode),] </span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">duplicated</span>(mex_variables_2<span class="sc">$</span>muncode) <span class="co">#this omits 1463 entries </span></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sum</span>(<span class="fu">duplicated</span>(mex_variables_2<span class="sc">$</span>muncode)) <span class="co">#0 duplicates </span></span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="co">#Most up to date df so far, 10  varibales </span></span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>mex_variables3 <span class="ot">&lt;-</span> <span class="fu">subset</span>(mex_variables, <span class="at">select =</span> <span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">7</span><span class="sc">:</span><span class="dv">11</span>, <span class="dv">15</span><span class="sc">:</span><span class="dv">21</span>, <span class="dv">23</span><span class="sc">:</span><span class="dv">33</span>))  </span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">colSums</span>(<span class="fu">is.na</span>(mex_variables3))</span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  <span class="co">#13 variables total, includes political party vars</span></span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>  <span class="co">#mex variables3 and marg_homicide_df are principal &amp; most up to date</span></span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="co">#Govt Transfers </span></span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>mex_variables3<span class="sc">$</span>govt_transfer <span class="ot">&lt;-</span> mex_variables<span class="sc">$</span><span class="st">"aportaciones"</span> <span class="sc">+</span> mex_variables<span class="sc">$</span><span class="st">"participaciones"</span>  <span class="co">#added new column total gov transfer to mex_variable3 da</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>marginalization2 <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"data_raw/marg_index_06anexo_base.csv"</span>) <span class="co">#marg by municipality 2010, columns str are not characters</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#Homicide data</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>esochomicide <span class="ot">&lt;-</span> <span class="fu">read_dta</span>(<span class="st">"data_raw/ESOC_Mexico_drug_related_murders.dta"</span>) <span class="co">#all homicide data 2006- 11 </span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>homicidesub <span class="ot">&lt;-</span> esochomicide <span class="sc">%&gt;%</span> </span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2010</span>)    <span class="co">#subset ESOC homicide data for 2010 values</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>homicidesub2 <span class="ot">&lt;-</span> homicidesub[,<span class="fu">c</span>(<span class="st">"idunico"</span>, <span class="st">"deaths_total"</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>                                 <span class="st">"deaths_execution"</span>, <span class="st">"deaths_confront"</span>, <span class="st">"deaths_aggression"</span>)] </span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">#sum(is.na(homicidesub2))  </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>mhmerge <span class="ot">&lt;-</span> <span class="fu">merge</span>(marginsub2, homicidesub2, <span class="at">by.x =</span> <span class="fu">c</span>(<span class="st">"municipality code"</span>), <span class="at">by.y =</span> <span class="fu">c</span>(<span class="st">"idunico"</span>)) <span class="co">#merged data by INEGI code* </span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(mhmerge<span class="sc">$</span>deaths_total)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(mhmerge<span class="sc">$</span>deaths_total)) </span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>mhmerge_rename <span class="ot">&lt;-</span> <span class="fu">rename</span>(mhmerge, <span class="at">municip_code =</span> <span class="st">"municipality code"</span>, <span class="at">state_code =</span> <span class="st">"state code"</span>, <span class="at">marg_grade =</span> <span class="st">"marginalization grade"</span>, <span class="at">margin_index =</span> IM, <span class="at">total_pop =</span> <span class="st">"total population"</span>) </span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># renamed variables, new df</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         state        muncode      municipio           year        areakm2 
+             0              0              0              0              0 
+    population       popn_10k dist_us_border        gdp_usd       same_all 
+             9              9              0              8              5 
+same_state_mun  same_mun_exec 
+             5              5 </code></pre>
+</div>
 </div>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>marg_homicide_df_rename<span class="sc">$</span>total_govt_transfer <span class="ot">&lt;-</span>mex_variables3<span class="sc">$</span>total_govt_transfer <span class="co">#add govt transfer column from mexvariables3 to this df</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">#Road Access</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>road_access <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"/Users/diegoflores/Poli_90_intro_2/recovered_202203281742/unsaved/coneval_road_access.csv"</span>)</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  road_access2 <span class="ot">&lt;-</span> <span class="fu">subset</span>(road_access, </span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>                         <span class="at">select =</span> <span class="sc">-</span><span class="fu">c</span>(clave_entidad, </span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>                                     entidad_federativa, municipio,</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>                                     poblacion_2010))</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  road_access3 <span class="ot">&lt;-</span> <span class="fu">rename</span>(road_access2, </span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>                         <span class="at">muncode =</span> clave_municipal, </span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>                         <span class="at">percent_road_access =</span> porc_pob_acce_muy_baja_o_baja)</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rm</span>(road_access)</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rm</span>(road_access2)</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  road_access3[<span class="fu">complete.cases</span>(road_access3), ]                 <span class="co"># Keep only the complete rows, removes last two 2 rows </span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>road_access4 <span class="ot">&lt;-</span> road_access3[<span class="fu">complete.cases</span>(road_access3), ] <span class="co"># Store the complete cases subset in a new data frame</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">colSums</span>(<span class="fu">is.na</span>(road_access4))                                 <span class="co">#0 NA values. Dont replace 0s. 0's mean no percentage has difficulty                                                                  accessing paved roads </span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>marg_homicide_df<span class="sc">$</span>percent_road_access <span class="ot">&lt;-</span> road_access4<span class="sc">$</span>percent_road_access  <span class="co">#add road access to primary dataframe</span></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rm</span>(road_access4)  </span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="co">#subset: removed repetitive column names to merge both dfs into full df </span></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="co"># MARIJUANA SEIZURES </span></span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>marijuana_seizures <span class="ot">&lt;-</span> <span class="fu">read_dta</span>(<span class="st">"/Users/diegoflores/Poli_90_intro_2/Thesis_data/marihuana_1990_2016.dta"</span>)</span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">str</span>(marijuana_seizures)</span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summary</span>(marijuana_seizures)</span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>  marijuana_seizures_sub <span class="ot">&lt;-</span> marijuana_seizures <span class="sc">%&gt;%</span> <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2010</span>) <span class="co">#filter for year 2010 </span></span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>  marijuanasub2 <span class="ot">&lt;-</span> <span class="fu">subset</span>(marijuana_seizures_sub, <span class="at">select =</span> <span class="sc">-</span><span class="fu">c</span>(id_state, state, municipio, munseat)) <span class="co">#remove repetitive columns </span></span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>  marijuanasub2                 <span class="co">#only 3 variables now: year, muncode, and seizures </span></span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>                                <span class="co">#add mj sub 2 to mex variables3</span></span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>mex_variables3<span class="sc">$</span>marijuana_seizures <span class="ot">&lt;-</span> marijuanasub2<span class="sc">$</span>marihuana</span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="co"># POP DENSITY </span></span>
-<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>mex_variables3<span class="sc">$</span>pop_density <span class="ot">&lt;-</span> mex_variables3<span class="sc">$</span><span class="st">"population"</span> <span class="sc">/</span> mex_variables3<span class="sc">$</span><span class="st">"areakm2"</span>  <span class="co">#take total population and divide by municipal measure of square kilometers</span></span>
-<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a><span class="co">#Create homicide rate variable from deaths total</span></span>
-<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>mhmerge_controls2_nj<span class="sc">$</span>homicide_rates10k <span class="ot">&lt;-</span> (mhmerge_controls2_nj<span class="sc">$</span>deaths_total <span class="sc">/</span> mhmerge_controls2_nj<span class="sc">$</span>population) <span class="sc">*</span> <span class="dv">10000</span></span>
-<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>mhmerge_controls2_nj<span class="sc">$</span>homicide_rates100k <span class="ot">&lt;-</span> (mhmerge_controls2_nj<span class="sc">$</span>deaths_total <span class="sc">/</span> mhmerge_controls2_nj<span class="sc">$</span>population) <span class="sc">*</span> <span class="dv">100000</span></span>
-<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a><span class="co">#IMPORTANT MERGE below #main df is mhmerge_controls2</span></span>
-<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>marg_homicide_df_rename <span class="ot">&lt;-</span> <span class="fu">rename</span>(marg_homicide_df, <span class="at">muncode =</span> municip_code) <span class="co">#The issue is here where this df doesnt have homicide_per_100k variable instead has deaths disagregated. MAKE a homicide variable. im completely missing it. issue solved, maindf now has homicide_rates100k variable</span></span>
-<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(marg_homicide_df_rename)</span>
-<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>mhmerge_controls2 <span class="ot">&lt;-</span> <span class="fu">left_join</span>(marg_homicide_df_rename, mex_variables3, <span class="at">by=</span> <span class="st">'muncode'</span>) <span class="co">#leftjoin merge                                                                                               control to main df  </span></span>
-<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a><span class="co"># WITHOUT OUTLIER </span></span>
-<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>mhmerge_controls2_nj <span class="ot">&lt;-</span> <span class="fu">subset</span>(mhmerge_controls2, muncode <span class="sc">!=</span> <span class="dv">8037</span>) </span>
-<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>(mhmerge_controls2_nj)</span>
-<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a><span class="co">#NEW DF delete later</span></span>
-<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>  marg_hom_deaths <span class="ot">&lt;-</span> <span class="fu">subset</span>(mhmerge_controls2_nj, </span>
-<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>                            <span class="at">select =</span> <span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">9</span><span class="sc">:</span><span class="dv">12</span>, <span class="dv">14</span><span class="sc">:</span><span class="dv">16</span>, <span class="dv">18</span>, <span class="dv">21</span><span class="sc">:</span><span class="dv">23</span>, <span class="dv">25</span><span class="sc">:</span><span class="dv">27</span>, <span class="dv">30</span><span class="sc">:</span><span class="dv">32</span>))</span>
-<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(marg_hom_deaths)</span>
-<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>  marg_hom_deaths2 <span class="ot">&lt;-</span> marg_hom_deaths <span class="sc">%&gt;%</span> </span>
-<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(<span class="fu">desc</span>(homicide_rates100k)) <span class="sc">%&gt;%</span> </span>
-<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(muncode) </span>
-<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a>marg_hom_deaths2<span class="fl">.1</span> <span class="ot">&lt;-</span> <span class="fu">subset</span>(marg_hom_deaths2, </span>
-<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a>                             <span class="at">select =</span> <span class="sc">-</span><span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">10</span><span class="sc">:</span><span class="dv">12</span>))</span>
-<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>  marg_hom_deaths3 <span class="ot">&lt;-</span> marg_hom_deaths <span class="sc">%&gt;%</span> </span>
-<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(<span class="fu">desc</span>(deaths_total)) <span class="sc">%&gt;%</span> </span>
-<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(muncode) </span>
-<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a><span class="co">#Log Transformations WITH OUTLIER </span></span>
-<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>mhmerge_controls2<span class="sc">$</span>loghomicide <span class="ot">&lt;-</span> <span class="fu">log</span>(mhmerge_controls2<span class="sc">$</span>deaths_total <span class="sc">+</span> <span class="dv">1</span>)</span>
-<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a><span class="co">#Homicide Rates transformation w outlier </span></span>
-<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a>mhmerge_controls2<span class="sc">$</span>homicide_rates10k <span class="ot">&lt;-</span> (mhmerge_controls2<span class="sc">$</span>deaths_total <span class="sc">/</span> mhmerge_controls2<span class="sc">$</span>population) <span class="sc">*</span> <span class="dv">10000</span></span>
-<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a>mhmerge_controls2<span class="sc">$</span>homicide_rates100k <span class="ot">&lt;-</span> (mhmerge_controls2<span class="sc">$</span>deaths_total <span class="sc">/</span> mhmerge_controls2<span class="sc">$</span>population) <span class="sc">*</span> <span class="dv">100000</span> </span>
-<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a><span class="co"># NO OUTLIER</span></span>
-<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a><span class="co">#Log tranformation of deaths total for NJ</span></span>
-<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a>  mhmerge_controls2_nj<span class="sc">$</span>loghomicide <span class="ot">&lt;-</span> <span class="fu">log</span>(mhmerge_controls2_nj<span class="sc">$</span>deaths_total <span class="sc">+</span> <span class="dv">1</span>)</span>
-<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a><span class="co">#More Log transformations </span></span>
-<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a>mhmerge_controls2_nj<span class="sc">$</span>log_govt_transfer <span class="ot">&lt;-</span> <span class="fu">log</span>(mhmerge_controls2_nj<span class="sc">$</span>total_govt_transfer <span class="sc">+</span> <span class="dv">1</span>)</span>
-<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a>mhmerge_controls2_nj<span class="sc">$</span>logpop_density <span class="ot">&lt;-</span> <span class="fu">log</span>(mhmerge_controls2_nj<span class="sc">$</span>pop_density <span class="sc">+</span> <span class="dv">1</span>) <span class="co">#also attempt to run regression with popn_10k vs pop density </span></span>
-<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a>mhmerge_controls2_nj<span class="sc">$</span>log_percent_road_access <span class="ot">&lt;-</span> <span class="fu">log</span>(mhmerge_controls2_nj<span class="sc">$</span>percent_road_access <span class="sc">+</span> <span class="dv">1</span>)</span>
-<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a>mhmerge_controls2_nj<span class="sc">$</span>log_gdp_usd <span class="ot">&lt;-</span> <span class="fu">log</span>(mhmerge_controls2_nj<span class="sc">$</span>gdp_usd <span class="sc">+</span> <span class="dv">1</span>)</span>
-<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-76"><a href="#cb4-76" aria-hidden="true" tabindex="-1"></a><span class="co"># New variable - region  </span></span>
-<span id="cb4-77"><a href="#cb4-77" aria-hidden="true" tabindex="-1"></a>mhmerge_controls2_nj <span class="ot">&lt;-</span> mhmerge_controls2_nj <span class="sc">%&gt;%</span>  </span>
-<span id="cb4-78"><a href="#cb4-78" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">region =</span> <span class="fu">case_when</span>(state_code <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">6</span>, <span class="dv">11</span>, <span class="dv">14</span>, <span class="dv">16</span>, <span class="dv">18</span>, <span class="dv">22</span>, <span class="dv">24</span>, <span class="dv">32</span>) <span class="sc">~</span> <span class="st">'central_west'</span>,</span>
-<span id="cb4-79"><a href="#cb4-79" aria-hidden="true" tabindex="-1"></a>                            state_code <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">9</span>, <span class="dv">12</span>, <span class="dv">13</span>, <span class="dv">15</span>, <span class="dv">17</span>, <span class="dv">21</span>, <span class="dv">29</span>, <span class="dv">20</span>) <span class="sc">~</span> <span class="st">'central'</span>,</span>
-<span id="cb4-80"><a href="#cb4-80" aria-hidden="true" tabindex="-1"></a>                            state_code <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">8</span>,  <span class="dv">10</span>, <span class="dv">19</span>, <span class="dv">25</span>, <span class="dv">26</span>, <span class="dv">28</span>) <span class="sc">~</span> <span class="st">'north'</span>,</span>
-<span id="cb4-81"><a href="#cb4-81" aria-hidden="true" tabindex="-1"></a>                            state_code <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">7</span>, <span class="dv">23</span>, <span class="dv">27</span>, <span class="dv">30</span>, <span class="dv">31</span>) <span class="sc">~</span> <span class="st">'southeast'</span>))</span>
-<span id="cb4-82"><a href="#cb4-82" aria-hidden="true" tabindex="-1"></a> </span>
-<span id="cb4-83"><a href="#cb4-83" aria-hidden="true" tabindex="-1"></a><span class="do">## Summary Statistics ## </span></span>
-<span id="cb4-84"><a href="#cb4-84" aria-hidden="true" tabindex="-1"></a>labs <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">ogname =</span> <span class="fu">c</span>(<span class="st">'margin_index'</span>, <span class="st">'deaths_total'</span>, </span>
-<span id="cb4-85"><a href="#cb4-85" aria-hidden="true" tabindex="-1"></a>                              <span class="st">'population'</span>,<span class="st">'homicide_rates100k'</span>, <span class="st">'marijuana_seizures'</span>),</span>
-<span id="cb4-86"><a href="#cb4-86" aria-hidden="true" tabindex="-1"></a>                  <span class="at">newname =</span> <span class="fu">c</span>(<span class="st">'Marginalization Index'</span>,<span class="st">'Total Homicides'</span>,</span>
-<span id="cb4-87"><a href="#cb4-87" aria-hidden="true" tabindex="-1"></a>                              <span class="st">'Population'</span>,<span class="st">'Homicides per 100k'</span>, <span class="st">'Marijuana Seizures'</span>))</span>
-<span id="cb4-88"><a href="#cb4-88" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-89"><a href="#cb4-89" aria-hidden="true" tabindex="-1"></a><span class="fu">sumtable</span>(mhmerge_controls2_nj, <span class="at">vars =</span> <span class="fu">c</span>(<span class="st">'margin_index'</span>,<span class="st">'deaths_total'</span>, </span>
-<span id="cb4-90"><a href="#cb4-90" aria-hidden="true" tabindex="-1"></a>                                        <span class="st">'population'</span>,<span class="st">'homicide_rates100k'</span>, <span class="st">'marijuana_seizures'</span>), <span class="at">digits =</span> <span class="dv">3</span>, <span class="at">labels=</span>labs, <span class="at">out=</span><span class="st">'htmlreturn'</span>, <span class="at">file =</span><span class="st">'thesis_summarystat'</span>, <span class="at">title =</span> <span class="st">'Table 1'</span>)</span>
-<span id="cb4-91"><a href="#cb4-91" aria-hidden="true" tabindex="-1"></a>   summ <span class="ot">=</span> <span class="fu">list</span>(</span>
-<span id="cb4-92"><a href="#cb4-92" aria-hidden="true" tabindex="-1"></a>           <span class="fu">c</span>(<span class="st">'notNA(x)'</span>,<span class="st">'mean(x)'</span>,<span class="st">'min(x)'</span>,<span class="st">'max(x)'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Unknown or uninitialised column: `total_govt_transfer`.</code></pre>
 </div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2,463 × 3
+   muncode  year marihuana
+     &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;
+ 1    1001  2010    296.  
+ 2    1002  2010      0   
+ 3    1003  2010     31.2 
+ 4    1004  2010      0   
+ 5    1005  2010      0   
+ 6    1006  2010      2.10
+ 7    1007  2010      0   
+ 8    1008  2010      0   
+ 9    1009  2010      0   
+10    1010  2010      0   
+# ℹ 2,453 more rows</code></pre>
+</div>
+</div>
+<section id="summary-statistics" class="level4">
+<h4 class="anchored" data-anchor-id="summary-statistics">Summary Statistics</h4>
 <div class="cell">
-<details class="code-fold">
-<summary>Click to show code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="do">##Plot 1 </span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> mhmerge_controls2_nj) <span class="sc">+</span> </span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> margin_index, <span class="at">y =</span> homicide_rates100k, <span class="at">color =</span> region) <span class="sc">+</span>    </span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>               <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">1.4</span>, <span class="at">alpha =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>               <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Marginalization Index"</span>, </span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">y =</span> <span class="st">"Homicide rate per 100,000"</span>,</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>                    <span class="at">title =</span> <span class="st">"Marginalization Levels and Drug War Homicides"</span>, </span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>                    <span class="at">subtitle =</span> <span class="st">"Data points are homicide rates per 100,000 people"</span>,</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>                    <span class="at">caption =</span> <span class="st">"Source: Princeton Empirical Studies of Conflict"</span>)</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>p1 </span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">+</span> <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">715</span>) <span class="co">#Zooming into plot </span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>p1<span class="fl">.2</span> <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> mhmerge_controls2_nj) <span class="sc">+</span> </span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> margin_index, <span class="at">y =</span> deaths_total, <span class="at">color =</span> region) <span class="sc">+</span>    </span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>               <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">1.4</span>, <span class="at">alpha =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>               <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Marginalization Index"</span>, </span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>                    <span class="at">y =</span> <span class="st">"Total Homicides"</span>,</span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>                    <span class="at">title =</span> <span class="st">"Marginalization Levels and Drug War Homicides"</span>, </span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>                    <span class="at">subtitle =</span> <span class="st">"Data points are individual homicides"</span>,</span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>                    <span class="at">caption =</span> <span class="st">"Source: Princeton Empirical Studies of Conflict"</span>)</span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>p1<span class="fl">.2</span></span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="co">#Running average - 'loess'</span></span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 1 still </span></span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">+</span> <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">715</span>) <span class="sc">+</span></span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"loess"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">+</span>  </span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">400</span>) <span class="sc">+</span> <span class="fu">coord_cartesian</span>(<span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">2.2</span>, <span class="fl">3.8</span>)) <span class="sc">+</span> <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"loess"</span>) <span class="sc">+</span> </span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>() <span class="sc">+</span></span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>region) </span>
-<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">+</span>  </span>
-<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">715</span>) <span class="sc">+</span> <span class="fu">coord_cartesian</span>(<span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">2.2</span>, <span class="fl">3.8</span>)) <span class="sc">+</span> <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"loess"</span>) <span class="sc">+</span> </span>
-<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>() <span class="sc">+</span></span>
-<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(region<span class="sc">~</span>.)</span>
-<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">+</span>  </span>
-<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">25</span>) <span class="sc">+</span> <span class="fu">coord_cartesian</span>(<span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">2.2</span>, <span class="fl">3.8</span>)) <span class="sc">+</span>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"loess"</span>) <span class="sc">+</span></span>
-<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>() <span class="sc">+</span></span>
-<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(.<span class="sc">~</span>region)</span>
-<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("devEMF") # if not installed already</span></span>
-<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(devEMF)</span>
-<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>tmp_file <span class="ot">&lt;-</span> <span class="st">"EMF_plot.emf"</span></span>
-<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a><span class="co"># ?emf # if needed</span></span>
-<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a><span class="fu">emf</span>(<span class="at">file=</span> tmp_file, <span class="at">pointsize=</span> <span class="dv">10</span>, <span class="at">width=</span> <span class="dv">5</span>, <span class="at">height=</span> <span class="dv">3</span>) <span class="co"># Opens a device</span></span>
-<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>temp_margins <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">1.5</span>, <span class="fl">2.3</span>, <span class="fl">0.5</span>, <span class="fl">0.2</span>) <span class="co"># Adjust margins</span></span>
-<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>), <span class="at">mar =</span> temp_margins,</span>
-<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">mgp=</span><span class="fu">c</span>(<span class="fl">0.6</span>, <span class="fl">0.3</span>, <span class="dv">0</span>),  <span class="at">tcl =</span> <span class="sc">-</span><span class="fl">0.15</span>, <span class="at">las =</span> <span class="dv">1</span>)</span>
-<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(p1 <span class="sc">+</span> <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">715</span>) <span class="sc">+</span></span>
-<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"loess"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>)) <span class="co"># create your plot</span></span>
-<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a><span class="fu">grid</span>(<span class="at">col=</span> <span class="st">"grey"</span>)</span>
-<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>()  <span class="co"># Close the device</span></span>
-<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a><span class="co">#linear </span></span>
-<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">+</span>  </span>
-<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">600</span>) <span class="sc">+</span> <span class="fu">coord_cartesian</span>(<span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">2.2</span>, <span class="fl">3.8</span>)) <span class="sc">+</span> <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>) <span class="sc">+</span> </span>
-<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>region) </span>
-<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a><span class="co">#Homicides as a function of distance to US border </span></span>
-<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> mhmerge_controls2_nj) <span class="sc">+</span> </span>
-<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> dist_us_border, <span class="at">y =</span> homicide_rates100k, <span class="at">color =</span> region) <span class="sc">+</span>    </span>
-<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a>               <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">1.4</span>, <span class="at">alpha =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
-<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a>               <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Disatance to US Border"</span>, </span>
-<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a>                    <span class="at">y =</span> <span class="st">"Homicide rate per 100,000"</span>,</span>
-<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a>                    <span class="at">title =</span> <span class="st">"Distance to US Border &amp; Drug War Homicides"</span>, </span>
-<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a>                    <span class="at">subtitle =</span> <span class="st">"Data points are homicide rates per 100,000 people"</span>,</span>
-<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a>                    <span class="at">caption =</span> <span class="st">"Source: Princeton Empirical Studies of Conflict"</span>) <span class="sc">+</span></span>
-<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">715</span>) </span>
-<span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a>p2</span>
-<span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a><span class="co">#Homicide plotted against govt transfer</span></span>
-<span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> mhmerge_controls2_nj) <span class="sc">+</span> </span>
-<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> log_govt_transfer, <span class="at">y =</span> homicide_rates100k, <span class="at">color =</span> region) <span class="sc">+</span>    </span>
-<span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a>               <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">1.4</span>, <span class="at">alpha =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
-<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a>               <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Log Government Transfers"</span>, </span>
-<span id="cb5-75"><a href="#cb5-75" aria-hidden="true" tabindex="-1"></a>                    <span class="at">y =</span> <span class="st">"Homicide rate per 100,000"</span>,</span>
-<span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a>                    <span class="at">title =</span> <span class="st">"Government tranfers &amp; Drug War Homicides"</span>, </span>
-<span id="cb5-77"><a href="#cb5-77" aria-hidden="true" tabindex="-1"></a>                    <span class="at">subtitle =</span> <span class="st">"Data points are homicide rates per 100,000 people"</span>,</span>
-<span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a>                    <span class="at">caption =</span> <span class="st">"Source: Princeton Empirical Studies of Conflict"</span>) <span class="sc">+</span></span>
-<span id="cb5-79"><a href="#cb5-79" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">715</span>) </span>
-<span id="cb5-80"><a href="#cb5-80" aria-hidden="true" tabindex="-1"></a>p3</span>
-<span id="cb5-81"><a href="#cb5-81" aria-hidden="true" tabindex="-1"></a><span class="co">#homicide plotted against population</span></span>
-<span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a>p4 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> mhmerge_controls2_nj) <span class="sc">+</span> </span>
-<span id="cb5-83"><a href="#cb5-83" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> popn_10k, <span class="at">y =</span> homicide_rates100k, <span class="at">color =</span> region) <span class="sc">+</span>    </span>
-<span id="cb5-84"><a href="#cb5-84" aria-hidden="true" tabindex="-1"></a>               <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">1.4</span>, <span class="at">alpha =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
-<span id="cb5-85"><a href="#cb5-85" aria-hidden="true" tabindex="-1"></a>               <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Population per 10,000"</span>, </span>
-<span id="cb5-86"><a href="#cb5-86" aria-hidden="true" tabindex="-1"></a>                    <span class="at">y =</span> <span class="st">"Homicide rate per 100,000"</span>,</span>
-<span id="cb5-87"><a href="#cb5-87" aria-hidden="true" tabindex="-1"></a>                    <span class="at">title =</span> <span class="st">"Population per 10,000  &amp; Drug War Homicides"</span>, </span>
-<span id="cb5-88"><a href="#cb5-88" aria-hidden="true" tabindex="-1"></a>                    <span class="at">subtitle =</span> <span class="st">"Data points are homicide rates per 100,000 people"</span>,</span>
-<span id="cb5-89"><a href="#cb5-89" aria-hidden="true" tabindex="-1"></a>                    <span class="at">caption =</span> <span class="st">"Source: Princeton Empirical Studies of Conflict"</span>) <span class="sc">+</span></span>
-<span id="cb5-90"><a href="#cb5-90" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">300</span>) <span class="sc">+</span> <span class="fu">xlim</span>(<span class="dv">0</span>,<span class="dv">25</span>)</span>
-<span id="cb5-91"><a href="#cb5-91" aria-hidden="true" tabindex="-1"></a>p4</span>
-<span id="cb5-92"><a href="#cb5-92" aria-hidden="true" tabindex="-1"></a><span class="co"># Homicides and GDP </span></span>
-<span id="cb5-93"><a href="#cb5-93" aria-hidden="true" tabindex="-1"></a>p5 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> mhmerge_controls2_nj) <span class="sc">+</span> </span>
-<span id="cb5-94"><a href="#cb5-94" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> gdp_usd, <span class="at">y =</span> homicide_rates100k, <span class="at">color =</span> region) <span class="sc">+</span>    </span>
-<span id="cb5-95"><a href="#cb5-95" aria-hidden="true" tabindex="-1"></a>               <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">1.4</span>, <span class="at">alpha =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
-<span id="cb5-96"><a href="#cb5-96" aria-hidden="true" tabindex="-1"></a>               <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"GDP (USD)"</span>, </span>
-<span id="cb5-97"><a href="#cb5-97" aria-hidden="true" tabindex="-1"></a>                    <span class="at">y =</span> <span class="st">"Homicide rate per 100,000"</span>,</span>
-<span id="cb5-98"><a href="#cb5-98" aria-hidden="true" tabindex="-1"></a>                    <span class="at">title =</span> <span class="st">"Municipal GDP &amp; Drug War Homicides"</span>, </span>
-<span id="cb5-99"><a href="#cb5-99" aria-hidden="true" tabindex="-1"></a>                    <span class="at">subtitle =</span> <span class="st">"Data points are homicide rates per 100,000 people"</span>,</span>
-<span id="cb5-100"><a href="#cb5-100" aria-hidden="true" tabindex="-1"></a>                    <span class="at">caption =</span> <span class="st">"Source: Princeton Empirical Studies of Conflict"</span>) <span class="sc">+</span></span>
-<span id="cb5-101"><a href="#cb5-101" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">250</span>) <span class="sc">+</span> <span class="fu">xlim</span>(<span class="dv">22000</span>,<span class="dv">0</span>) <span class="sc">+</span></span>
-<span id="cb5-102"><a href="#cb5-102" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">21500</span>,<span class="dv">950</span>))</span>
-<span id="cb5-103"><a href="#cb5-103" aria-hidden="true" tabindex="-1"></a>p5</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<div class="cell">
-<details class="code-fold">
-<summary>Click to show code</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># W/ deaths total &amp; outlier </span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>model_outlier <span class="ot">&lt;-</span> <span class="fu">lm</span>(deaths_total <span class="sc">~</span> margin_index, <span class="at">data  =</span> marg_homicide_df)</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model_outlier)</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># W/ homicide rate &amp; outlier </span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>model_outlier2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(homicide_rates100k <span class="sc">~</span> margin_index, <span class="at">data =</span> mhmerge_controls2)</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model_outlier2)</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co">#Base model - no outlier, no fixed effect</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>model1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(homicide_rates100k <span class="sc">~</span> margin_index , <span class="at">data =</span> mhmerge_controls2_nj)</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model1)</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(model1)</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="co">#hist(resid(model1))</span></span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="co">#qqnorm(resid(model1)) </span></span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="co">#qqline(resid(model1))</span></span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating table</span></span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="co">#stargazer(basemodel1) # disable stargazer messages in header - isnt working </span></span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="co">#BASE model - simple regression, no outlier, fixed effect</span></span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>model2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(homicide_rates100k <span class="sc">~</span> margin_index <span class="sc">+</span> <span class="fu">as.factor</span>(state_code), <span class="at">data =</span> mhmerge_controls2_nj)</span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model2)</span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(model2)</span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Multiple regression - no outlier</span></span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>         </span>
-<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>model3 <span class="ot">&lt;-</span> <span class="fu">lm</span>(homicide_rates100k <span class="sc">~</span> margin_index <span class="sc">+</span> log_govt_transfer <span class="sc">+</span> popn_10k <span class="sc">+</span> log_percent_road_access <span class="sc">+</span> log_gdp_usd <span class="sc">+</span> <span class="fu">as.factor</span>(state_code), <span class="at">data =</span> mhmerge_controls2_nj)</span>
-<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model3)</span>
-<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(model3)</span>
-<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>model4  <span class="ot">&lt;-</span>  <span class="fu">lm</span>(homicide_rates100k <span class="sc">~</span> margin_index <span class="sc">+</span> log_govt_transfer <span class="sc">+</span> popn_10k <span class="sc">+</span> log_percent_road_access <span class="sc">+</span> log_gdp_usd <span class="sc">+</span> marijuana_seizures <span class="sc">+</span> same_all <span class="sc">+</span> same_state_mun <span class="sc">+</span> same_mun_exec <span class="sc">+</span> <span class="fu">as.factor</span>(state_code), <span class="at">data =</span> mhmerge_controls2_nj)</span>
-<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model4)</span>
-<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(model4)</span>
-<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>model5  <span class="ot">&lt;-</span>  <span class="fu">lm</span>(homicide_rates100k <span class="sc">~</span> margin_index <span class="sc">+</span>log_govt_transfer <span class="sc">+</span> popn_10k <span class="sc">+</span> log_percent_road_access <span class="sc">+</span> log_gdp_usd <span class="sc">+</span> marijuana_seizures <span class="sc">+</span> same_all <span class="sc">+</span> same_state_mun <span class="sc">+</span> same_mun_exec, <span class="at">data =</span> mhmerge_controls2_nj)</span>
-<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model5) <span class="co">#multiple regression, no state FE </span></span>
-<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(model5)</span>
-<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a><span class="fu">stargazer</span>(model1, model2, model3, model4, model5, <span class="at">type =</span> <span class="st">'text'</span>)</span>
-<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a><span class="co">#Using Sjplot </span></span>
-<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a><span class="fu">tab_model</span>(model1, model2, model3, model4, model5) </span>
-<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a><span class="co"># regression output in html with output saved to file, good for word</span></span>
-<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a><span class="fu">stargazer</span>(model1, model2, model3, model4, model5, <span class="at">type =</span> <span class="st">'html'</span>, <span class="at">out =</span> <span class="st">'my_regression_table.html'</span>)</span>
-<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a><span class="fu">stargazer</span>(attitude)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Summary Statistics ## </span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>labs <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">ogname =</span> <span class="fu">c</span>(<span class="st">'margin_index'</span>, <span class="st">'deaths_total'</span>, </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>                              <span class="st">'population'</span>,<span class="st">'homicide_rates100k'</span>, <span class="st">'marijuana_seizures'</span>),</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>                  <span class="at">newname =</span> <span class="fu">c</span>(<span class="st">'Marginalization Index'</span>,<span class="st">'Total Homicides'</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>                              <span class="st">'Population'</span>,<span class="st">'Homicides per 100k'</span>, <span class="st">'Marijuana Seizures'</span>))</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="fu">sumtable</span>(mhmerge_controls2_nj, <span class="at">vars =</span> <span class="fu">c</span>(<span class="st">'margin_index'</span>,<span class="st">'deaths_total'</span>, <span class="st">'population'</span>,<span class="st">'homicide_rates100k'</span>, <span class="st">'marijuana_seizures'</span>), <span class="at">digits =</span> <span class="dv">3</span>, </span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">labels=</span>labs, <span class="at">out=</span><span class="st">"kable"</span>, <span class="at">title =</span> <span class="st">'Table 1'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<caption>Table 1</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Variable</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">N</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Mean</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Std. Dev.</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Min</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Pctl. 25</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Pctl. 75</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Max</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Marginalization Index</td>
+<td style="text-align: left;">2455</td>
+<td style="text-align: left;">0.000653</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">-2.34</td>
+<td style="text-align: left;">-0.76</td>
+<td style="text-align: left;">0.678</td>
+<td style="text-align: left;">4.36</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Total Homicides</td>
+<td style="text-align: left;">2455</td>
+<td style="text-align: left;">5.1</td>
+<td style="text-align: left;">28.1</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">670</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Population</td>
+<td style="text-align: left;">2453</td>
+<td style="text-align: left;">46016</td>
+<td style="text-align: left;">132567</td>
+<td style="text-align: left;">94</td>
+<td style="text-align: left;">4338</td>
+<td style="text-align: left;">33209</td>
+<td style="text-align: left;">1836582</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Homicides per 100k</td>
+<td style="text-align: left;">2453</td>
+<td style="text-align: left;">0.000137</td>
+<td style="text-align: left;">0.000724</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0.0000449</td>
+<td style="text-align: left;">0.0192</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Marijuana Seizures</td>
+<td style="text-align: left;">2455</td>
+<td style="text-align: left;">814</td>
+<td style="text-align: left;">7873</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0.3</td>
+<td style="text-align: left;">204107</td>
+</tr>
+</tbody>
+</table>
 
 
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>summ <span class="ot">=</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">'notNA(x)'</span>,<span class="st">'mean(x)'</span>,<span class="st">'min(x)'</span>,<span class="st">'max(x)'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="visualizing-data" class="level3">
+<h3 class="anchored" data-anchor-id="visualizing-data">Visualizing data</h3>
+<p>These plots visualize the relationship between marginalization and homicides per 100k alongside additional categorical variables, such as region.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="do">##Plot 1 </span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> mhmerge_controls2_nj) <span class="sc">+</span> </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> margin_index, <span class="at">y =</span> homicide_rates100k, <span class="at">color =</span> region) <span class="sc">+</span>    </span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>               <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">1.4</span>, <span class="at">alpha =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>               <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Marginalization Index"</span>, </span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">y =</span> <span class="st">"Homicide rate per 100,000"</span>,</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>                    <span class="at">title =</span> <span class="st">"Marginalization Levels and Drug War Homicides"</span>, </span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>                    <span class="at">subtitle =</span> <span class="st">"Data points are homicide rates per 100,000 people"</span>,</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>                    <span class="at">caption =</span> <span class="st">"Source: Princeton Empirical Studies of Conflict"</span>)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>p1 </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 2 rows containing missing values or values outside the scale range
+(`geom_point()`).</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="thesismx_files/figure-html/plots-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">+</span> <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">715</span>) <span class="co">#Zooming into plot </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 2 rows containing missing values or values outside the scale range
+(`geom_point()`).</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="thesismx_files/figure-html/plots-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>p1<span class="fl">.2</span> <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> mhmerge_controls2_nj) <span class="sc">+</span> </span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> margin_index, <span class="at">y =</span> deaths_total, <span class="at">color =</span> region) <span class="sc">+</span>    </span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>               <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">1.4</span>, <span class="at">alpha =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>               <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Marginalization Index"</span>, </span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">y =</span> <span class="st">"Total Homicides"</span>,</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">title =</span> <span class="st">"Marginalization Levels and Drug War Homicides"</span>, </span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>                    <span class="at">subtitle =</span> <span class="st">"Data points are individual homicides"</span>,</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>                    <span class="at">caption =</span> <span class="st">"Source: Princeton Empirical Studies of Conflict"</span>)</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>p1<span class="fl">.2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="thesismx_files/figure-html/plots-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Running average - 'loess'</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 1 still </span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">+</span> <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">715</span>) <span class="sc">+</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"loess"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 2 rows containing non-finite outside the scale range (`stat_smooth()`).
+Removed 2 rows containing missing values or values outside the scale range
+(`geom_point()`).</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 15 rows containing missing values or values outside the scale range
+(`geom_smooth()`).</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="thesismx_files/figure-html/plots-4.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">+</span>  </span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">400</span>) <span class="sc">+</span> <span class="fu">coord_cartesian</span>(<span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">2.2</span>, <span class="fl">3.8</span>)) <span class="sc">+</span> <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"loess"</span>) <span class="sc">+</span> </span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>() <span class="sc">+</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>region) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 2 rows containing non-finite outside the scale range
+(`stat_smooth()`).</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 2 rows containing missing values or values outside the scale range
+(`geom_point()`).</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 15 rows containing missing values or values outside the scale range
+(`geom_smooth()`).</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 798 rows containing missing values or values outside the scale range
+(`geom_point()`).</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="thesismx_files/figure-html/plots-5.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">+</span>  </span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">715</span>) <span class="sc">+</span> <span class="fu">coord_cartesian</span>(<span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">2.2</span>, <span class="fl">3.8</span>)) <span class="sc">+</span> <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"loess"</span>) <span class="sc">+</span> </span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>() <span class="sc">+</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(region<span class="sc">~</span>.)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 2 rows containing non-finite outside the scale range
+(`stat_smooth()`).</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 2 rows containing missing values or values outside the scale range
+(`geom_point()`).</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 15 rows containing missing values or values outside the scale range
+(`geom_smooth()`).</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 799 rows containing missing values or values outside the scale range
+(`geom_point()`).</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="thesismx_files/figure-html/plots-6.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">+</span>  </span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">25</span>) <span class="sc">+</span> <span class="fu">coord_cartesian</span>(<span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">2.2</span>, <span class="fl">3.8</span>)) <span class="sc">+</span>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"loess"</span>) <span class="sc">+</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>() <span class="sc">+</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(.<span class="sc">~</span>region)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 2 rows containing non-finite outside the scale range
+(`stat_smooth()`).</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 2 rows containing missing values or values outside the scale range
+(`geom_point()`).</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 15 rows containing missing values or values outside the scale range
+(`geom_smooth()`).</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 786 rows containing missing values or values outside the scale range
+(`geom_point()`).</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="thesismx_files/figure-html/plots-7.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(p1 <span class="sc">+</span> <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">715</span>) <span class="sc">+</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"loess"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>)) <span class="co"># create your plot</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 2 rows containing non-finite outside the scale range
+(`stat_smooth()`).</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 2 rows containing missing values or values outside the scale range
+(`geom_point()`).</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 15 rows containing missing values or values outside the scale range
+(`geom_smooth()`).</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="thesismx_files/figure-html/plots-8.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># linear plots</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">+</span>  <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">600</span>) <span class="sc">+</span> <span class="fu">coord_cartesian</span>(<span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">2.2</span>, <span class="fl">3.8</span>)) <span class="sc">+</span> <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>) <span class="sc">+</span> </span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>region) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 2 rows containing non-finite outside the scale range
+(`stat_smooth()`).</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 2 rows containing missing values or values outside the scale range
+(`geom_point()`).</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="thesismx_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Homicides as a function of distance to US border </span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> mhmerge_controls2_nj) <span class="sc">+</span> </span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> dist_us_border, <span class="at">y =</span> homicide_rates100k, <span class="at">color =</span> region) <span class="sc">+</span>    </span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>               <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">1.4</span>, <span class="at">alpha =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>               <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Disatance to US Border"</span>, </span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">y =</span> <span class="st">"Homicide rate per 100,000"</span>,</span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>                    <span class="at">title =</span> <span class="st">"Distance to US Border &amp; Drug War Homicides"</span>, </span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>                    <span class="at">subtitle =</span> <span class="st">"Data points are homicide rates per 100,000 people"</span>,</span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>                    <span class="at">caption =</span> <span class="st">"Source: Princeton Empirical Studies of Conflict"</span>) <span class="sc">+</span></span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">715</span>) </span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a>p2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 2 rows containing missing values or values outside the scale range
+(`geom_point()`).</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="thesismx_files/figure-html/unnamed-chunk-4-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Homicide plotted against govt transfer</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="co">#removed</span></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a><span class="co">#homicide plotted against population</span></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>p4 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> mhmerge_controls2_nj) <span class="sc">+</span> </span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> popn_10k, <span class="at">y =</span> homicide_rates100k, <span class="at">color =</span> region) <span class="sc">+</span>    </span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>               <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">1.4</span>, <span class="at">alpha =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>               <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Population per 10,000"</span>, </span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>                    <span class="at">y =</span> <span class="st">"Homicide rate per 100,000"</span>,</span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>                    <span class="at">title =</span> <span class="st">"Population per 10,000  &amp; Drug War Homicides"</span>, </span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>                    <span class="at">subtitle =</span> <span class="st">"Data points are homicide rates per 100,000 people"</span>,</span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>                    <span class="at">caption =</span> <span class="st">"Source: Princeton Empirical Studies of Conflict"</span>) <span class="sc">+</span></span>
+<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">300</span>) <span class="sc">+</span> <span class="fu">xlim</span>(<span class="dv">0</span>,<span class="dv">25</span>)</span>
+<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a>p4</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 91 rows containing missing values or values outside the scale range
+(`geom_point()`).</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="thesismx_files/figure-html/unnamed-chunk-4-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Homicides and GDP </span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>p5 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> mhmerge_controls2_nj) <span class="sc">+</span> </span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> gdp_usd, <span class="at">y =</span> homicide_rates100k, <span class="at">color =</span> region) <span class="sc">+</span>    </span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>               <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">1.4</span>, <span class="at">alpha =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>               <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"GDP (USD)"</span>, </span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">y =</span> <span class="st">"Homicide rate per 100,000"</span>,</span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>                    <span class="at">title =</span> <span class="st">"Municipal GDP &amp; Drug War Homicides"</span>, </span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>                    <span class="at">subtitle =</span> <span class="st">"Data points are homicide rates per 100,000 people"</span>,</span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a>                    <span class="at">caption =</span> <span class="st">"Source: Princeton Empirical Studies of Conflict"</span>) <span class="sc">+</span></span>
+<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">250</span>) <span class="sc">+</span> <span class="fu">xlim</span>(<span class="dv">22000</span>,<span class="dv">0</span>) <span class="sc">+</span></span>
+<span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">21500</span>,<span class="dv">950</span>))</span>
+<span id="cb48-12"><a href="#cb48-12" aria-hidden="true" tabindex="-1"></a>p5</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 33 rows containing missing values or values outside the scale range
+(`geom_point()`).</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="thesismx_files/figure-html/unnamed-chunk-4-4.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co"># W/ deaths total &amp; outlier </span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>model_outlier <span class="ot">&lt;-</span> <span class="fu">lm</span>(deaths_total <span class="sc">~</span> margin_index, <span class="at">data  =</span> marg_homicide_df)</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model_outlier)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = deaths_total ~ margin_index, data = marg_homicide_df)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+ -20.36   -9.22   -4.38    0.93 2719.79 
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)     6.213      1.240   5.010 5.84e-07 ***
+margin_index   -7.483      1.240  -6.033 1.86e-09 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 61.46 on 2454 degrees of freedom
+Multiple R-squared:  0.01461,   Adjusted R-squared:  0.01421 
+F-statistic: 36.39 on 1 and 2454 DF,  p-value: 1.856e-09</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co"># W/ homicide rate &amp; outlier </span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>model_outlier2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(homicide_rates100k <span class="sc">~</span> margin_index, <span class="at">data =</span> mhmerge_controls2)</span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model_outlier2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = homicide_rates100k ~ margin_index, data = mhmerge_controls2)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+ -30.33  -16.31  -10.64   -3.74 1890.97 
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)    13.791      1.455   9.480  &lt; 2e-16 ***
+margin_index   -7.610      1.455  -5.231 1.83e-07 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 72.06 on 2452 degrees of freedom
+  (2 observations deleted due to missingness)
+Multiple R-squared:  0.01104,   Adjusted R-squared:  0.01063 
+F-statistic: 27.36 on 1 and 2452 DF,  p-value: 1.83e-07</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Base model - no outlier, no fixed effect</span></span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>model1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(homicide_rates100k <span class="sc">~</span> margin_index , <span class="at">data =</span> mhmerge_controls2_nj)</span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = homicide_rates100k ~ margin_index, data = mhmerge_controls2_nj)
+
+Residuals:
+       Min         1Q     Median         3Q        Max 
+-0.0002999 -0.0001617 -0.0001060 -0.0000378  0.0189119 
+
+Coefficients:
+               Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)   1.372e-04  1.454e-05   9.439  &lt; 2e-16 ***
+margin_index -7.497e-05  1.454e-05  -5.155 2.73e-07 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.0007199 on 2451 degrees of freedom
+  (2 observations deleted due to missingness)
+Multiple R-squared:  0.01073,   Adjusted R-squared:  0.01032 
+F-statistic: 26.58 on 1 and 2451 DF,  p-value: 2.732e-07</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co">#confint(model1)</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a><span class="co">#hist(resid(model1))</span></span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a><span class="co">#qqnorm(resid(model1)) </span></span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a><span class="co">#qqline(resid(model1))</span></span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating table</span></span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a><span class="co">#stargazer(basemodel1) # disable stargazer messages in header - isnt working </span></span>
+<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-9"><a href="#cb56-9" aria-hidden="true" tabindex="-1"></a><span class="co">#BASE model - simple regression, no outlier, fixed effect</span></span>
+<span id="cb56-10"><a href="#cb56-10" aria-hidden="true" tabindex="-1"></a>model2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(homicide_rates100k <span class="sc">~</span> margin_index <span class="sc">+</span> <span class="fu">as.factor</span>(state_code), <span class="at">data =</span> mhmerge_controls2_nj)</span>
+<span id="cb56-11"><a href="#cb56-11" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = homicide_rates100k ~ margin_index + as.factor(state_code), 
+    data = mhmerge_controls2_nj)
+
+Residuals:
+       Min         1Q     Median         3Q        Max 
+-0.0012637 -0.0000410 -0.0000196  0.0000013  0.0178713 
+
+Coefficients:
+                          Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)              1.989e-05  2.044e-04   0.097   0.9225    
+margin_index            -2.120e-05  1.782e-05  -1.190   0.2343    
+as.factor(state_code)2   6.708e-05  3.646e-04   0.184   0.8540    
+as.factor(state_code)3  -3.804e-05  3.645e-04  -0.104   0.9169    
+as.factor(state_code)4  -1.929e-05  2.885e-04  -0.067   0.9467    
+as.factor(state_code)5  -1.053e-05  2.314e-04  -0.046   0.9637    
+as.factor(state_code)6   8.081e-05  2.952e-04   0.274   0.7843    
+as.factor(state_code)7   1.119e-05  2.153e-04   0.052   0.9586    
+as.factor(state_code)8   9.438e-04  2.203e-04   4.284 1.91e-05 ***
+as.factor(state_code)9  -3.669e-05  2.651e-04  -0.138   0.8900    
+as.factor(state_code)10  3.681e-04  2.310e-04   1.593   0.1112    
+as.factor(state_code)11 -2.972e-06  2.270e-04  -0.013   0.9896    
+as.factor(state_code)12  2.801e-04  2.202e-04   1.272   0.2035    
+as.factor(state_code)13 -1.468e-05  2.170e-04  -0.068   0.9461    
+as.factor(state_code)14  1.077e-04  2.126e-04   0.507   0.6125    
+as.factor(state_code)15  4.895e-06  2.125e-04   0.023   0.9816    
+as.factor(state_code)16  9.948e-05  2.138e-04   0.465   0.6418    
+as.factor(state_code)17  1.072e-04  2.353e-04   0.456   0.6487    
+as.factor(state_code)18  1.616e-04  2.538e-04   0.637   0.5244    
+as.factor(state_code)19  8.989e-04  2.247e-04   4.001 6.48e-05 ***
+as.factor(state_code)20  1.529e-05  2.076e-04   0.074   0.9413    
+as.factor(state_code)21  5.167e-06  2.100e-04   0.025   0.9804    
+as.factor(state_code)22 -1.827e-05  2.588e-04  -0.071   0.9437    
+as.factor(state_code)23 -1.794e-05  3.140e-04  -0.057   0.9544    
+as.factor(state_code)24  2.692e-05  2.230e-04   0.121   0.9039    
+as.factor(state_code)25  6.413e-04  2.587e-04   2.479   0.0132 *  
+as.factor(state_code)26  5.005e-04  2.187e-04   2.288   0.0222 *  
+as.factor(state_code)27 -6.797e-07  2.616e-04  -0.003   0.9979    
+as.factor(state_code)28  1.231e-03  2.284e-04   5.392 7.65e-08 ***
+as.factor(state_code)29 -3.571e-05  2.216e-04  -0.161   0.8720    
+as.factor(state_code)30  1.442e-05  2.100e-04   0.069   0.9453    
+as.factor(state_code)31 -1.613e-05  2.150e-04  -0.075   0.9402    
+as.factor(state_code)32  1.541e-06  2.223e-04   0.007   0.9945    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.0006757 on 2420 degrees of freedom
+  (2 observations deleted due to missingness)
+Multiple R-squared:  0.1396,    Adjusted R-squared:  0.1282 
+F-statistic: 12.27 on 32 and 2420 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="co">#confint(model2)</span></span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Multiple regression - no outlier</span></span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a>model3 <span class="ot">&lt;-</span> <span class="fu">lm</span>(homicide_rates100k <span class="sc">~</span> margin_index <span class="sc">+</span> popn_10k <span class="sc">+</span> log_gdp_usd <span class="sc">+</span> <span class="fu">as.factor</span>(state_code), <span class="at">data =</span> mhmerge_controls2_nj) <span class="co"># model3 had log govt transfers, removed temp.</span></span>
+<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = homicide_rates100k ~ margin_index + popn_10k + log_gdp_usd + 
+    as.factor(state_code), data = mhmerge_controls2_nj)
+
+Residuals:
+       Min         1Q     Median         3Q        Max 
+-0.0012774 -0.0000527 -0.0000214  0.0000078  0.0178438 
+
+Coefficients:
+                          Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)              1.460e-04  6.596e-04   0.221   0.8248    
+margin_index            -3.953e-05  3.543e-05  -1.116   0.2647    
+popn_10k                -2.864e-06  1.235e-06  -2.319   0.0205 *  
+log_gdp_usd             -1.414e-05  7.104e-05  -0.199   0.8422    
+as.factor(state_code)2   2.357e-04  3.768e-04   0.626   0.5316    
+as.factor(state_code)3  -1.423e-05  3.708e-04  -0.038   0.9694    
+as.factor(state_code)4   1.799e-06  2.958e-04   0.006   0.9951    
+as.factor(state_code)5  -4.732e-06  2.402e-04  -0.020   0.9843    
+as.factor(state_code)6   8.785e-05  3.026e-04   0.290   0.7716    
+as.factor(state_code)7   3.142e-05  2.246e-04   0.140   0.8887    
+as.factor(state_code)8   9.490e-04  2.296e-04   4.134 3.69e-05 ***
+as.factor(state_code)9   1.051e-04  2.796e-04   0.376   0.7070    
+as.factor(state_code)10  3.767e-04  2.397e-04   1.572   0.1162    
+as.factor(state_code)11  2.571e-05  2.361e-04   0.109   0.9133    
+as.factor(state_code)12  3.083e-04  2.302e-04   1.339   0.1806    
+as.factor(state_code)13 -9.261e-06  2.262e-04  -0.041   0.9674    
+as.factor(state_code)14  1.151e-04  2.221e-04   0.518   0.6044    
+as.factor(state_code)15  3.053e-05  2.222e-04   0.137   0.8907    
+as.factor(state_code)16  1.069e-04  2.231e-04   0.479   0.6319    
+as.factor(state_code)17  1.147e-04  2.441e-04   0.470   0.6384    
+as.factor(state_code)18  1.730e-04  2.619e-04   0.661   0.5088    
+as.factor(state_code)19  9.117e-04  2.338e-04   3.899 9.91e-05 ***
+as.factor(state_code)20  2.345e-05  2.171e-04   0.108   0.9140    
+as.factor(state_code)21  1.387e-05  2.195e-04   0.063   0.9496    
+as.factor(state_code)22  7.013e-06  2.668e-04   0.026   0.9790    
+as.factor(state_code)23  2.203e-05  3.209e-04   0.069   0.9453    
+as.factor(state_code)24  4.076e-05  2.320e-04   0.176   0.8606    
+as.factor(state_code)25  6.803e-04  2.670e-04   2.548   0.0109 *  
+as.factor(state_code)26  4.987e-04  2.280e-04   2.187   0.0288 *  
+as.factor(state_code)27  3.060e-05  2.696e-04   0.114   0.9096    
+as.factor(state_code)28  1.246e-03  2.373e-04   5.250 1.65e-07 ***
+as.factor(state_code)29 -4.201e-05  2.307e-04  -0.182   0.8555    
+as.factor(state_code)30  2.742e-05  2.196e-04   0.125   0.9007    
+as.factor(state_code)31 -7.710e-06  2.246e-04  -0.034   0.9726    
+as.factor(state_code)32 -2.089e-08  2.313e-04   0.000   0.9999    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.0006753 on 2417 degrees of freedom
+  (3 observations deleted due to missingness)
+Multiple R-squared:  0.1416,    Adjusted R-squared:  0.1295 
+F-statistic: 11.73 on 34 and 2417 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co">#confint(model3)</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>model4  <span class="ot">&lt;-</span>  <span class="fu">lm</span>(homicide_rates100k <span class="sc">~</span> margin_index <span class="sc">+</span> popn_10k  <span class="sc">+</span> log_gdp_usd <span class="sc">+</span> marijuana_seizures <span class="sc">+</span> same_all <span class="sc">+</span> same_state_mun <span class="sc">+</span> same_mun_exec <span class="sc">+</span> <span class="fu">as.factor</span>(state_code), <span class="at">data =</span> mhmerge_controls2_nj)</span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model4)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = homicide_rates100k ~ margin_index + popn_10k + log_gdp_usd + 
+    marijuana_seizures + same_all + same_state_mun + same_mun_exec + 
+    as.factor(state_code), data = mhmerge_controls2_nj)
+
+Residuals:
+       Min         1Q     Median         3Q        Max 
+-0.0012846 -0.0000586 -0.0000219  0.0000135  0.0178111 
+
+Coefficients:
+                          Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)              1.306e-04  6.682e-04   0.196  0.84501    
+margin_index            -4.389e-05  3.554e-05  -1.235  0.21699    
+popn_10k                -3.259e-06  1.258e-06  -2.591  0.00962 ** 
+log_gdp_usd             -1.367e-05  7.199e-05  -0.190  0.84941    
+marijuana_seizures       3.160e-09  1.982e-09   1.595  0.11095    
+same_all                 1.405e-04  1.133e-04   1.240  0.21524    
+same_state_mun           1.275e-06  4.132e-05   0.031  0.97538    
+same_mun_exec           -5.315e-05  5.625e-05  -0.945  0.34478    
+as.factor(state_code)2   7.540e-05  3.915e-04   0.193  0.84730    
+as.factor(state_code)3  -6.807e-06  3.725e-04  -0.018  0.98542    
+as.factor(state_code)4   3.889e-05  2.979e-04   0.131  0.89615    
+as.factor(state_code)5   5.511e-06  2.415e-04   0.023  0.98179    
+as.factor(state_code)6   1.109e-04  3.041e-04   0.365  0.71537    
+as.factor(state_code)7   4.769e-05  2.252e-04   0.212  0.83235    
+as.factor(state_code)8   9.637e-04  2.311e-04   4.170 3.15e-05 ***
+as.factor(state_code)9   1.388e-04  2.811e-04   0.494  0.62155    
+as.factor(state_code)10  3.570e-04  2.423e-04   1.474  0.14072    
+as.factor(state_code)11 -6.538e-06  2.384e-04  -0.027  0.97813    
+as.factor(state_code)12  3.261e-04  2.316e-04   1.408  0.15929    
+as.factor(state_code)13  4.957e-06  2.271e-04   0.022  0.98259    
+as.factor(state_code)14  7.862e-05  2.244e-04   0.350  0.72607    
+as.factor(state_code)15  4.760e-05  2.240e-04   0.213  0.83173    
+as.factor(state_code)16  1.218e-04  2.237e-04   0.544  0.58621    
+as.factor(state_code)17  1.060e-04  2.442e-04   0.434  0.66430    
+as.factor(state_code)18  1.899e-04  2.630e-04   0.722  0.47036    
+as.factor(state_code)19  9.348e-04  2.353e-04   3.973 7.32e-05 ***
+as.factor(state_code)20  3.776e-05  2.175e-04   0.174  0.86218    
+as.factor(state_code)21  2.724e-05  2.202e-04   0.124  0.90155    
+as.factor(state_code)22  4.676e-05  2.696e-04   0.173  0.86232    
+as.factor(state_code)23  4.246e-05  3.215e-04   0.132  0.89492    
+as.factor(state_code)24  6.845e-05  2.338e-04   0.293  0.76977    
+as.factor(state_code)25  6.301e-04  2.697e-04   2.337  0.01954 *  
+as.factor(state_code)26  4.511e-04  2.304e-04   1.958  0.05035 .  
+as.factor(state_code)27  4.740e-05  2.702e-04   0.175  0.86073    
+as.factor(state_code)28  1.256e-03  2.386e-04   5.264 1.54e-07 ***
+as.factor(state_code)29 -4.274e-05  2.306e-04  -0.185  0.85300    
+as.factor(state_code)30  5.380e-05  2.208e-04   0.244  0.80748    
+as.factor(state_code)31  2.202e-05  2.270e-04   0.097  0.92271    
+as.factor(state_code)32  2.230e-05  2.320e-04   0.096  0.92346    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.0006752 on 2413 degrees of freedom
+  (3 observations deleted due to missingness)
+Multiple R-squared:  0.1433,    Adjusted R-squared:  0.1298 
+F-statistic: 10.62 on 38 and 2413 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="co">#confint(model4)</span></span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>model5  <span class="ot">&lt;-</span>  <span class="fu">lm</span>(homicide_rates100k <span class="sc">~</span> margin_index <span class="sc">+</span> popn_10k <span class="sc">+</span> log_gdp_usd <span class="sc">+</span> marijuana_seizures <span class="sc">+</span> same_all <span class="sc">+</span> same_state_mun <span class="sc">+</span> same_mun_exec, <span class="at">data =</span> mhmerge_controls2_nj)</span>
+<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model5) <span class="co">#multiple regression, no state FE </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = homicide_rates100k ~ margin_index + popn_10k + log_gdp_usd + 
+    marijuana_seizures + same_all + same_state_mun + same_mun_exec, 
+    data = mhmerge_controls2_nj)
+
+Residuals:
+       Min         1Q     Median         3Q        Max 
+-0.0012374 -0.0001678 -0.0000903 -0.0000153  0.0187758 
+
+Coefficients:
+                     Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)        -7.403e-04  6.341e-04  -1.168 0.243096    
+margin_index       -4.089e-05  3.410e-05  -1.199 0.230605    
+popn_10k           -4.626e-06  1.238e-06  -3.736 0.000191 ***
+log_gdp_usd         9.858e-05  7.200e-05   1.369 0.171090    
+marijuana_seizures  7.822e-09  1.889e-09   4.141 3.57e-05 ***
+same_all            4.544e-06  8.710e-05   0.052 0.958400    
+same_state_mun      4.553e-05  3.873e-05   1.175 0.239941    
+same_mun_exec       4.496e-05  5.316e-05   0.846 0.397767    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.0007164 on 2444 degrees of freedom
+  (3 observations deleted due to missingness)
+Multiple R-squared:  0.02306,   Adjusted R-squared:  0.02026 
+F-statistic: 8.241 on 7 and 2444 DF,  p-value: 5.776e-10</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="co">#confint(model5)</span></span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a><span class="co">#stargazer(model1, model2, model3, model4, model5, type ="html")</span></span>
+<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-6"><a href="#cb64-6" aria-hidden="true" tabindex="-1"></a><span class="co">#Using Sjplot </span></span>
+<span id="cb64-7"><a href="#cb64-7" aria-hidden="true" tabindex="-1"></a><span class="fu">tab_model</span>(model1, model2, model3, model4, model5)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th" style="text-align: center; border-top: double; font-style: normal; font-weight: bold; padding: 0.2cm;">&nbsp;</td>
+<td colspan="3" data-quarto-table-cell-role="th" style="text-align: center; border-top: double; font-style: normal; font-weight: bold; padding: 0.2cm;">homicide rates 100 k</td>
+<td colspan="3" data-quarto-table-cell-role="th" style="text-align: center; border-top: double; font-style: normal; font-weight: bold; padding: 0.2cm;">homicide rates 100 k</td>
+<td colspan="3" data-quarto-table-cell-role="th" style="text-align: center; border-top: double; font-style: normal; font-weight: bold; padding: 0.2cm;">homicide rates 100 k</td>
+<td colspan="3" data-quarto-table-cell-role="th" style="text-align: center; border-top: double; font-style: normal; font-weight: bold; padding: 0.2cm;">homicide rates 100 k</td>
+<td colspan="3" data-quarto-table-cell-role="th" style="text-align: center; border-top: double; font-style: normal; font-weight: bold; padding: 0.2cm;">homicide rates 100 k</td>
+</tr>
+<tr class="even">
+<td style="text-align: center; border-bottom: 1px solid; font-style: italic; font-weight: normal;">Predictors</td>
+<td style="text-align: center; border-bottom: 1px solid; font-style: italic; font-weight: normal;">Estimates</td>
+<td style="text-align: center; border-bottom: 1px solid; font-style: italic; font-weight: normal;">CI</td>
+<td style="text-align: center; border-bottom: 1px solid; font-style: italic; font-weight: normal;">p</td>
+<td style="text-align: center; border-bottom: 1px solid; font-style: italic; font-weight: normal;">Estimates</td>
+<td style="text-align: center; border-bottom: 1px solid; font-style: italic; font-weight: normal;">CI</td>
+<td style="text-align: center;">p</td>
+<td style="text-align: center;">Estimates</td>
+<td style="text-align: center;">CI</td>
+<td style="text-align: center;">p</td>
+<td style="text-align: center;">Estimates</td>
+<td style="text-align: center;">CI</td>
+<td style="text-align: center;">p</td>
+<td style="text-align: center;">Estimates</td>
+<td style="text-align: center;">CI</td>
+<td style="text-align: center;">p</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">(Intercept)</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.00</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"><strong>&lt;0.001</strong></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.00</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.923</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.825</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.845</td>
+<td style="text-align: center;">-0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.243</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">margin index</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.00</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.00&nbsp;–&nbsp;-0.00</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"><strong>&lt;0.001</strong></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.00</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.234</td>
+<td style="text-align: center;">-0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.265</td>
+<td style="text-align: center;">-0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.217</td>
+<td style="text-align: center;">-0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.231</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">state code [2]</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.00</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.854</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.532</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.847</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">state code [3]</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.00</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.917</td>
+<td style="text-align: center;">-0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.969</td>
+<td style="text-align: center;">-0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.985</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">state code [4]</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.00</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.947</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.995</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.896</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">state code [5]</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.00</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.964</td>
+<td style="text-align: center;">-0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.984</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.982</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">state code [6]</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.00</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.784</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.772</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.715</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">state code [7]</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.00</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.959</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.889</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.832</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">state code [8]</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.00</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;"><strong>&lt;0.001</strong></td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;"><strong>&lt;0.001</strong></td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;"><strong>&lt;0.001</strong></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">state code [9]</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.00</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.890</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.707</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.622</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">state code [10]</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.00</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.111</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.116</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.141</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">state code [11]</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.00</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.990</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.913</td>
+<td style="text-align: center;">-0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.978</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">state code [12]</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.00</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.204</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.181</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.159</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">state code [13]</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.00</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.946</td>
+<td style="text-align: center;">-0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.967</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.983</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">state code [14]</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.00</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.612</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.604</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.726</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">state code [15]</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.00</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.982</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.891</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.832</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">state code [16]</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.00</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.642</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.632</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.586</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">state code [17]</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.00</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.649</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.638</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.664</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">state code [18]</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.00</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.524</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.509</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.470</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">state code [19]</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.00</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;"><strong>&lt;0.001</strong></td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;"><strong>&lt;0.001</strong></td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;"><strong>&lt;0.001</strong></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">state code [20]</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.00</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.941</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.914</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.862</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">state code [21]</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.00</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.980</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.950</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.902</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">state code [22]</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.00</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.944</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.979</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.862</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">state code [23]</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.00</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.954</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.945</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.895</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">state code [24]</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.00</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.904</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.861</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.770</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">state code [25]</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.00</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;"><strong>0.013</strong></td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;"><strong>0.011</strong></td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;"><strong>0.020</strong></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">state code [26]</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.00</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;"><strong>0.022</strong></td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;"><strong>0.029</strong></td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.050</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">state code [27]</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.00</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.998</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.910</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.861</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">state code [28]</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.00</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;"><strong>&lt;0.001</strong></td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;"><strong>&lt;0.001</strong></td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;"><strong>&lt;0.001</strong></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">state code [29]</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.00</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.872</td>
+<td style="text-align: center;">-0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.855</td>
+<td style="text-align: center;">-0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.853</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">state code [30]</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.00</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.945</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.901</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.807</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">state code [31]</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.00</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.940</td>
+<td style="text-align: center;">-0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.973</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.923</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">state code [32]</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.00</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.994</td>
+<td style="text-align: center;">-0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">1.000</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.923</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">popn 10k</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">-0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;-0.00</td>
+<td style="text-align: center;"><strong>0.020</strong></td>
+<td style="text-align: center;">-0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;-0.00</td>
+<td style="text-align: center;"><strong>0.010</strong></td>
+<td style="text-align: center;">-0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;-0.00</td>
+<td style="text-align: center;"><strong>&lt;0.001</strong></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">log gdp usd</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">-0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.842</td>
+<td style="text-align: center;">-0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.849</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.171</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">marijuana seizures</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.111</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;"><strong>&lt;0.001</strong></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">same all</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.215</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.958</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">same state mun</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.975</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.240</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">same mun exec</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">-0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.345</td>
+<td style="text-align: center;">0.00</td>
+<td style="text-align: center;">-0.00&nbsp;–&nbsp;0.00</td>
+<td style="text-align: center;">0.398</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top; padding-top: 0.1cm; padding-bottom: 0.1cm; border-top: 1px solid;">Observations</td>
+<td colspan="3" style="text-align: left; padding: 0.2cm; vertical-align: top; padding-top: 0.1cm; padding-bottom: 0.1cm; border-top: 1px solid;">2453</td>
+<td colspan="3" style="text-align: left; padding: 0.2cm; vertical-align: top; padding-top: 0.1cm; padding-bottom: 0.1cm; border-top: 1px solid;">2453</td>
+<td colspan="3" style="text-align: left; padding: 0.2cm; vertical-align: top; padding-top: 0.1cm; padding-bottom: 0.1cm; border-top: 1px solid;">2452</td>
+<td colspan="3" style="text-align: left; padding: 0.2cm; vertical-align: top; padding-top: 0.1cm; padding-bottom: 0.1cm; border-top: 1px solid;">2452</td>
+<td colspan="3" style="text-align: left; padding: 0.2cm; vertical-align: top; padding-top: 0.1cm; padding-bottom: 0.1cm; border-top: 1px solid;">2452</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top; padding-top: 0.1cm; padding-bottom: 0.1cm;">R<sup>2</sup> / R<sup>2</sup> adjusted</td>
+<td colspan="3" style="text-align: left; padding: 0.2cm; vertical-align: top; padding-top: 0.1cm; padding-bottom: 0.1cm;">0.011 / 0.010</td>
+<td colspan="3" style="text-align: left; padding: 0.2cm; vertical-align: top; padding-top: 0.1cm; padding-bottom: 0.1cm;">0.140 / 0.128</td>
+<td colspan="3" style="text-align: left; padding: 0.2cm; vertical-align: top; padding-top: 0.1cm; padding-bottom: 0.1cm;">0.142 / 0.130</td>
+<td colspan="3" style="text-align: left; padding: 0.2cm; vertical-align: top; padding-top: 0.1cm; padding-bottom: 0.1cm;">0.143 / 0.130</td>
+<td colspan="3" style="text-align: left; padding: 0.2cm; vertical-align: top; padding-top: 0.1cm; padding-bottom: 0.1cm;">0.023 / 0.020</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="co"># regression output in html with output saved to file, good for word and hosting an html site, for exmaple through quarto.</span></span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stargazer</span>(model1, model2, model3, model4, model5, <span class="at">type =</span> <span class="st">"html"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<table style="text-align:center">
+<tbody><tr>
+<td colspan="6" style="border-bottom: 1px solid black">
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td colspan="5">
+<em>Dependent variable:</em>
+</td>
+</tr>
+<tr>
+<td>
+</td>
+<td colspan="5" style="border-bottom: 1px solid black">
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td colspan="5">
+homicide_rates100k
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+(1)
+</td>
+<td>
+(2)
+</td>
+<td>
+(3)
+</td>
+<td>
+(4)
+</td>
+<td>
+(5)
+</td>
+</tr>
+<tr>
+<td colspan="6" style="border-bottom: 1px solid black">
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+margin_index
+</td>
+<td>
+-0.0001<sup>***</sup>
+</td>
+<td>
+-0.00002
+</td>
+<td>
+-0.00004
+</td>
+<td>
+-0.00004
+</td>
+<td>
+-0.00004
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+(0.00001)
+</td>
+<td>
+(0.00002)
+</td>
+<td>
+(0.00004)
+</td>
+<td>
+(0.00004)
+</td>
+<td>
+(0.00003)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+popn_10k
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+-0.00000<sup>**</sup>
+</td>
+<td>
+-0.00000<sup>***</sup>
+</td>
+<td>
+-0.00000<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+(0.00000)
+</td>
+<td>
+(0.00000)
+</td>
+<td>
+(0.00000)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+log_gdp_usd
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+-0.00001
+</td>
+<td>
+-0.00001
+</td>
+<td>
+0.0001
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+(0.0001)
+</td>
+<td>
+(0.0001)
+</td>
+<td>
+(0.0001)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+marijuana_seizures
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+0.000
+</td>
+<td>
+0.000<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+(0.000)
+</td>
+<td>
+(0.000)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+same_all
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+0.0001
+</td>
+<td>
+0.00000
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+(0.0001)
+</td>
+<td>
+(0.0001)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+same_state_mun
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+0.00000
+</td>
+<td>
+0.00005
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+(0.00004)
+</td>
+<td>
+(0.00004)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+same_mun_exec
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+-0.0001
+</td>
+<td>
+0.00004
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+(0.0001)
+</td>
+<td>
+(0.0001)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+as.factor(state_code)2
+</td>
+<td>
+</td>
+<td>
+0.0001
+</td>
+<td>
+0.0002
+</td>
+<td>
+0.0001
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+(0.0004)
+</td>
+<td>
+(0.0004)
+</td>
+<td>
+(0.0004)
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+as.factor(state_code)3
+</td>
+<td>
+</td>
+<td>
+-0.00004
+</td>
+<td>
+-0.00001
+</td>
+<td>
+-0.00001
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+(0.0004)
+</td>
+<td>
+(0.0004)
+</td>
+<td>
+(0.0004)
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+as.factor(state_code)4
+</td>
+<td>
+</td>
+<td>
+-0.00002
+</td>
+<td>
+0.00000
+</td>
+<td>
+0.00004
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+(0.0003)
+</td>
+<td>
+(0.0003)
+</td>
+<td>
+(0.0003)
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+as.factor(state_code)5
+</td>
+<td>
+</td>
+<td>
+-0.00001
+</td>
+<td>
+-0.00000
+</td>
+<td>
+0.00001
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+as.factor(state_code)6
+</td>
+<td>
+</td>
+<td>
+0.0001
+</td>
+<td>
+0.0001
+</td>
+<td>
+0.0001
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+(0.0003)
+</td>
+<td>
+(0.0003)
+</td>
+<td>
+(0.0003)
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+as.factor(state_code)7
+</td>
+<td>
+</td>
+<td>
+0.00001
+</td>
+<td>
+0.00003
+</td>
+<td>
+0.00005
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+as.factor(state_code)8
+</td>
+<td>
+</td>
+<td>
+0.001<sup>***</sup>
+</td>
+<td>
+0.001<sup>***</sup>
+</td>
+<td>
+0.001<sup>***</sup>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+as.factor(state_code)9
+</td>
+<td>
+</td>
+<td>
+-0.00004
+</td>
+<td>
+0.0001
+</td>
+<td>
+0.0001
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+(0.0003)
+</td>
+<td>
+(0.0003)
+</td>
+<td>
+(0.0003)
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+as.factor(state_code)10
+</td>
+<td>
+</td>
+<td>
+0.0004
+</td>
+<td>
+0.0004
+</td>
+<td>
+0.0004
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+as.factor(state_code)11
+</td>
+<td>
+</td>
+<td>
+-0.00000
+</td>
+<td>
+0.00003
+</td>
+<td>
+-0.00001
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+as.factor(state_code)12
+</td>
+<td>
+</td>
+<td>
+0.0003
+</td>
+<td>
+0.0003
+</td>
+<td>
+0.0003
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+as.factor(state_code)13
+</td>
+<td>
+</td>
+<td>
+-0.00001
+</td>
+<td>
+-0.00001
+</td>
+<td>
+0.00000
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+as.factor(state_code)14
+</td>
+<td>
+</td>
+<td>
+0.0001
+</td>
+<td>
+0.0001
+</td>
+<td>
+0.0001
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+as.factor(state_code)15
+</td>
+<td>
+</td>
+<td>
+0.00000
+</td>
+<td>
+0.00003
+</td>
+<td>
+0.00005
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+as.factor(state_code)16
+</td>
+<td>
+</td>
+<td>
+0.0001
+</td>
+<td>
+0.0001
+</td>
+<td>
+0.0001
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+as.factor(state_code)17
+</td>
+<td>
+</td>
+<td>
+0.0001
+</td>
+<td>
+0.0001
+</td>
+<td>
+0.0001
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+as.factor(state_code)18
+</td>
+<td>
+</td>
+<td>
+0.0002
+</td>
+<td>
+0.0002
+</td>
+<td>
+0.0002
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+(0.0003)
+</td>
+<td>
+(0.0003)
+</td>
+<td>
+(0.0003)
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+as.factor(state_code)19
+</td>
+<td>
+</td>
+<td>
+0.001<sup>***</sup>
+</td>
+<td>
+0.001<sup>***</sup>
+</td>
+<td>
+0.001<sup>***</sup>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+as.factor(state_code)20
+</td>
+<td>
+</td>
+<td>
+0.00002
+</td>
+<td>
+0.00002
+</td>
+<td>
+0.00004
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+as.factor(state_code)21
+</td>
+<td>
+</td>
+<td>
+0.00001
+</td>
+<td>
+0.00001
+</td>
+<td>
+0.00003
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+as.factor(state_code)22
+</td>
+<td>
+</td>
+<td>
+-0.00002
+</td>
+<td>
+0.00001
+</td>
+<td>
+0.00005
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+(0.0003)
+</td>
+<td>
+(0.0003)
+</td>
+<td>
+(0.0003)
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+as.factor(state_code)23
+</td>
+<td>
+</td>
+<td>
+-0.00002
+</td>
+<td>
+0.00002
+</td>
+<td>
+0.00004
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+(0.0003)
+</td>
+<td>
+(0.0003)
+</td>
+<td>
+(0.0003)
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+as.factor(state_code)24
+</td>
+<td>
+</td>
+<td>
+0.00003
+</td>
+<td>
+0.00004
+</td>
+<td>
+0.0001
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+as.factor(state_code)25
+</td>
+<td>
+</td>
+<td>
+0.001<sup>**</sup>
+</td>
+<td>
+0.001<sup>**</sup>
+</td>
+<td>
+0.001<sup>**</sup>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+(0.0003)
+</td>
+<td>
+(0.0003)
+</td>
+<td>
+(0.0003)
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+as.factor(state_code)26
+</td>
+<td>
+</td>
+<td>
+0.001<sup>**</sup>
+</td>
+<td>
+0.0005<sup>**</sup>
+</td>
+<td>
+0.0005<sup>*</sup>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+as.factor(state_code)27
+</td>
+<td>
+</td>
+<td>
+-0.00000
+</td>
+<td>
+0.00003
+</td>
+<td>
+0.00005
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+(0.0003)
+</td>
+<td>
+(0.0003)
+</td>
+<td>
+(0.0003)
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+as.factor(state_code)28
+</td>
+<td>
+</td>
+<td>
+0.001<sup>***</sup>
+</td>
+<td>
+0.001<sup>***</sup>
+</td>
+<td>
+0.001<sup>***</sup>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+as.factor(state_code)29
+</td>
+<td>
+</td>
+<td>
+-0.00004
+</td>
+<td>
+-0.00004
+</td>
+<td>
+-0.00004
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+as.factor(state_code)30
+</td>
+<td>
+</td>
+<td>
+0.00001
+</td>
+<td>
+0.00003
+</td>
+<td>
+0.0001
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+as.factor(state_code)31
+</td>
+<td>
+</td>
+<td>
+-0.00002
+</td>
+<td>
+-0.00001
+</td>
+<td>
+0.00002
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+as.factor(state_code)32
+</td>
+<td>
+</td>
+<td>
+0.00000
+</td>
+<td>
+-0.00000
+</td>
+<td>
+0.00002
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+Constant
+</td>
+<td>
+0.0001<sup>***</sup>
+</td>
+<td>
+0.00002
+</td>
+<td>
+0.0001
+</td>
+<td>
+0.0001
+</td>
+<td>
+-0.001
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+(0.00001)
+</td>
+<td>
+(0.0002)
+</td>
+<td>
+(0.001)
+</td>
+<td>
+(0.001)
+</td>
+<td>
+(0.001)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td colspan="6" style="border-bottom: 1px solid black">
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+Observations
+</td>
+<td>
+2,453
+</td>
+<td>
+2,453
+</td>
+<td>
+2,452
+</td>
+<td>
+2,452
+</td>
+<td>
+2,452
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+R<sup>2</sup>
+</td>
+<td>
+0.011
+</td>
+<td>
+0.140
+</td>
+<td>
+0.142
+</td>
+<td>
+0.143
+</td>
+<td>
+0.023
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+Adjusted R<sup>2</sup>
+</td>
+<td>
+0.010
+</td>
+<td>
+0.128
+</td>
+<td>
+0.130
+</td>
+<td>
+0.130
+</td>
+<td>
+0.020
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+Residual Std. Error
+</td>
+<td>
+0.001 (df = 2451)
+</td>
+<td>
+0.001 (df = 2420)
+</td>
+<td>
+0.001 (df = 2417)
+</td>
+<td>
+0.001 (df = 2413)
+</td>
+<td>
+0.001 (df = 2444)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+F Statistic
+</td>
+<td>
+26.579<sup>***</sup> (df = 1; 2451)
+</td>
+<td>
+12.266<sup>***</sup> (df = 32; 2420)
+</td>
+<td>
+11.728<sup>***</sup> (df = 34; 2417)
+</td>
+<td>
+10.624<sup>***</sup> (df = 38; 2413)
+</td>
+<td>
+8.241<sup>***</sup> (df = 7; 2444)
+</td>
+</tr>
+<tr>
+<td colspan="6" style="border-bottom: 1px solid black">
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+<em>Note:</em>
+</td>
+<td colspan="5" style="text-align:right">
+<sup><em></em></sup><em>p&lt;0.1; <sup><strong></strong></sup><strong>p&lt;0.05; <sup></sup></strong></em>p&lt;0.01
+</td>
+</tr>
+</tbody></table>
+
+
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
